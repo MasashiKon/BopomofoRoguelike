@@ -3,13 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class Dungeon : MonoBehaviour
+public class DungeonGenerator : MonoBehaviour
 {
+    static public int dungeonSize = 51;
+
     public GameObject wall;
     public GameObject corridor;
     public GameObject start;
-    static private int dungeonSize = 51;
-    private int[,] field = new int[dungeonSize, dungeonSize];
+    public GameObject player;
+    public int[,] field = new int[dungeonSize, dungeonSize];
     List<int[]> route = new List<int[]>();
 
     // Start is called before the first frame update
@@ -110,6 +112,8 @@ public class Dungeon : MonoBehaviour
 
             }
         }
+
+        player.SetActive(true);
     }
 
     // Update is called once per frame
