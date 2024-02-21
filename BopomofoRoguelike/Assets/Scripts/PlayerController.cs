@@ -4,14 +4,17 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
+    public bool isPlayerReady = false;
     private DungeonGenerator dungeonGenerator;
     private int[,] field;
     private int[] playerPosition;
-    private bool inputEnabled = true;
+    private TurnManager turnManager;
     // Start is called before the first frame update
     void Start()
     {
         dungeonGenerator = GameObject.Find("Dungeon").GetComponent<DungeonGenerator>();
+        turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
+
         field = dungeonGenerator.field;
         for (int i = 0; i < DungeonGenerator.dungeonSize; i++)
         {
@@ -24,20 +27,23 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        gameObject.transform.position = new Vector2(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2);
+        gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+
+        turnManager.ProcessTurn();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (inputEnabled)
+        if (turnManager.isReadyNextMove)
         {
             if (Input.GetKey("up"))
             {
                 if (field[playerPosition[0] - 1, playerPosition[1]] != 0)
                 {
                     playerPosition[0]--;
-                    gameObject.transform.position = new Vector2(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    turnManager.ProcessTurn();
                 }
 
             }
@@ -46,7 +52,8 @@ public class PlayerController : MonoBehaviour
                 if (field[playerPosition[0] + 1, playerPosition[1]] != 0)
                 {
                     playerPosition[0]++;
-                    gameObject.transform.position = new Vector2(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    turnManager.ProcessTurn();
                 }
 
             }
@@ -55,7 +62,8 @@ public class PlayerController : MonoBehaviour
                 if (field[playerPosition[0], playerPosition[1] - 1] != 0)
                 {
                     playerPosition[1]--;
-                    gameObject.transform.position = new Vector2(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    turnManager.ProcessTurn();
                 }
 
             }
@@ -64,26 +72,12 @@ public class PlayerController : MonoBehaviour
                 if (field[playerPosition[0], playerPosition[1] + 1] != 0)
                 {
                     playerPosition[1]++;
-                    gameObject.transform.position = new Vector2(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    turnManager.ProcessTurn();
                 }
 
             }
-            DisableInputForSeconds(0.1f);
         }
 
-    }
-
-    // 入力を無効にするメソッド
-    void DisableInputForSeconds(float seconds)
-    {
-        inputEnabled = false;
-        StartCoroutine(EnableInputAfterDelay(seconds));
-    }
-
-    // 一定時間後に入力を再度有効にするコルーチン
-    IEnumerator EnableInputAfterDelay(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        inputEnabled = true;
     }
 }
