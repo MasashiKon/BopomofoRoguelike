@@ -408,6 +408,7 @@ MonoBehaviour:
   corridor: {fileID: 1274958485462594116, guid: 079b0fad3397148ce99f7a10533a5547, type: 3}
   start: {fileID: 4906096959846375642, guid: 9ff0d2d83ec724e6ca5419ee3f01a167, type: 3}
   player: {fileID: 1169909470}
+  enemy: {fileID: 6675271711461030591, guid: adcdf877c156c4dd69297e1e1d7e62ab, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

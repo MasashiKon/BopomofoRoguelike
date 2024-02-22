@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
+        turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
         gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
 
         turnManager.ProcessTurn();
@@ -39,8 +40,9 @@ public class PlayerController : MonoBehaviour
         {
             if (Input.GetKey("up"))
             {
-                if (field[playerPosition[0] - 1, playerPosition[1]] != 0)
+                if (field[playerPosition[0] - 1, playerPosition[1]] != 0 && turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1]] == null)
                 {
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
                     playerPosition[0]--;
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     turnManager.ProcessTurn();
@@ -49,9 +51,11 @@ public class PlayerController : MonoBehaviour
             }
             else if (Input.GetKey("down"))
             {
-                if (field[playerPosition[0] + 1, playerPosition[1]] != 0)
+                if (field[playerPosition[0] + 1, playerPosition[1]] != 0 && turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1]] == null)
                 {
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
                     playerPosition[0]++;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     turnManager.ProcessTurn();
                 }
@@ -59,9 +63,11 @@ public class PlayerController : MonoBehaviour
             }
             else if (Input.GetKey("left"))
             {
-                if (field[playerPosition[0], playerPosition[1] - 1] != 0)
+                if (field[playerPosition[0], playerPosition[1] - 1] != 0 && turnManager.objectInfo[playerPosition[0], playerPosition[1] - 1] == null)
                 {
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
                     playerPosition[1]--;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     turnManager.ProcessTurn();
                 }
@@ -69,9 +75,11 @@ public class PlayerController : MonoBehaviour
             }
             else if (Input.GetKey("right"))
             {
-                if (field[playerPosition[0], playerPosition[1] + 1] != 0)
+                if (field[playerPosition[0], playerPosition[1] + 1] != 0 && turnManager.objectInfo[playerPosition[0], playerPosition[1] + 1] == null)
                 {
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
                     playerPosition[1]++;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     turnManager.ProcessTurn();
                 }

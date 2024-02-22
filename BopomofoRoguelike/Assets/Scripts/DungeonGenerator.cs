@@ -11,12 +11,18 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject corridor;
     public GameObject start;
     public GameObject player;
+    public GameObject enemy;
     public int[,] field = new int[dungeonSize, dungeonSize];
-    List<int[]> route = new List<int[]>();
+
+    private TurnManager turnManager;
+    private List<int[]> route = new List<int[]>();
+    private List<int[]> availableCell = new List<int[]>();
 
     // Start is called before the first frame update
     void Start()
     {
+        turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
+
         for (int i = 0; i < dungeonSize; i++)
         {
             for (int j = 0; j < dungeonSize; j++)
@@ -46,9 +52,11 @@ public class DungeonGenerator : MonoBehaviour
                     field[currentLoc[0] + direction[0], currentLoc[1] + direction[1]] = 1;
                     currentLoc = new int[] { currentLoc[0] + direction[0], currentLoc[1] + direction[1] };
                     route.Add(currentLoc);
+                    availableCell.Add(currentLoc);
                     field[currentLoc[0] + direction[0], currentLoc[1] + direction[1]] = 1;
                     currentLoc = new int[] { currentLoc[0] + direction[0], currentLoc[1] + direction[1] };
                     route.Add(currentLoc);
+                    availableCell.Add(currentLoc);
                     break;
                 }
                 else if (directions.Count == 0)
@@ -111,6 +119,16 @@ public class DungeonGenerator : MonoBehaviour
                 }
 
             }
+        }
+
+        for (int i = 0; i < 50; i++)
+        {
+            int randomIndex = Random.Range(0, availableCell.Count());
+            GameObject enemyInstance = Instantiate(enemy, new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity);
+            enemyInstance.GetComponent<EnemyController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
+            turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]] = enemyInstance;
+
+            availableCell.RemoveAt(randomIndex);
         }
 
         player.SetActive(true);

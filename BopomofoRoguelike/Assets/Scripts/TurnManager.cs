@@ -7,6 +7,7 @@ public class TurnManager : MonoBehaviour
     public bool isReadyNextMove = false;
     public GameObject mainCamera;
     public GameObject player;
+    public GameObject[,] objectInfo = new GameObject[DungeonGenerator.dungeonSize, DungeonGenerator.dungeonSize];
 
     // Camera Move
     private bool isCameraMoving = false;
@@ -18,7 +19,13 @@ public class TurnManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-
+        for (int i = 0; i < DungeonGenerator.dungeonSize; i++)
+        {
+            for (int j = 0; j < DungeonGenerator.dungeonSize; j++)
+            {
+                objectInfo[i, j] = null;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -54,5 +61,13 @@ public class TurnManager : MonoBehaviour
         // Camera Move
         isCameraMoving = true;
         cameraCurrentPos = new Vector3(player.transform.position.x, player.transform.position.y, -10);
+
+        // Enemy Move
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+        foreach (GameObject enemy in enemies)
+        {
+            enemy.GetComponent<EnemyController>().TakeAction();
+        }
     }
 }
