@@ -25,23 +25,24 @@ public class EnemyController : MonoBehaviour
     public void TakeAction()
     {
         List<int[]> availableCell = new List<int[]>();
-        if (field[pos[0] + 1, pos[1]] != 0)
+        if (field[pos[0] + 1, pos[1]] != 0 && turnManager.objectInfo[pos[0] + 1, pos[1]] == null)
         {
             availableCell.Add(new int[] { pos[0] + 1, pos[1] });
         }
-        if (field[pos[0] - 1, pos[1]] != 0)
+        if (field[pos[0] - 1, pos[1]] != 0 && turnManager.objectInfo[pos[0] - 1, pos[1]] == null)
         {
             availableCell.Add(new int[] { pos[0] - 1, pos[1] });
         }
-        if (field[pos[0], pos[1] + 1] != 0)
+        if (field[pos[0], pos[1] + 1] != 0 && turnManager.objectInfo[pos[0], pos[1] + 1] == null)
         {
             availableCell.Add(new int[] { pos[0], pos[1] + 1 });
         }
-        if (field[pos[0], pos[1] - 1] != 0)
+        if (field[pos[0], pos[1] - 1] != 0 && turnManager.objectInfo[pos[0], pos[1] - 1] == null)
         {
             availableCell.Add(new int[] { pos[0], pos[1] - 1 });
         }
 
+        if (availableCell.Count == 0) return;
         int randomIndex = Random.Range(0, availableCell.Count);
         turnManager.objectInfo[pos[0], pos[1]] = null;
         pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };

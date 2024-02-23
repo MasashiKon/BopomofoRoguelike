@@ -5,6 +5,7 @@ using UnityEngine;
 public class TurnManager : MonoBehaviour
 {
     public bool isReadyNextMove = false;
+    public bool isAttackPhase = false;
     public GameObject mainCamera;
     public GameObject player;
     public GameObject[,] objectInfo = new GameObject[DungeonGenerator.dungeonSize, DungeonGenerator.dungeonSize];
@@ -30,9 +31,83 @@ public class TurnManager : MonoBehaviour
 
     // Update is called once per frame
     void Update()
+    {  
+
+    }
+
+    public void ProcessTurn()
     {
-        if (isReadyNextMove) return;
-        if (isCameraMoving)
+        isReadyNextMove = false;
+        PlayerController playerController = player.GetComponent<PlayerController>();
+        // Battle Phase
+        if (playerController.isPlayerAttack)
+        {
+            if (player.transform.eulerAngles.z == 0)
+            {
+                if (objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]] && objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]].CompareTag("Enemy"))
+                {
+                    Destroy(objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]]);
+                    objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]] = null;
+                }
+            }
+            else if (player.transform.eulerAngles.z == 90)
+            {
+                if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1] && objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1].CompareTag("Enemy"))
+                {
+                    Destroy(objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1]);
+                    objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1] = null;
+                }
+
+            }
+            else if (player.transform.eulerAngles.z == 180)
+            {
+
+                if (objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]] && objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]].CompareTag("Enemy"))
+                {
+                    Destroy(objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]]);
+                    objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]] = null;
+                }
+
+            }
+            else if (player.transform.eulerAngles.z == 270)
+            {
+                if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1] && objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1].CompareTag("Enemy"))
+                {
+                    Destroy(objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1]);
+                    objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1] = null;
+                }
+            }
+        }
+        isAttackPhase = false;
+
+        // Camera Move
+        if (playerController.isPlayerMove)
+        {
+            isCameraMoving = true;
+            cameraCurrentPos = new Vector3(player.transform.position.x, player.transform.position.y, -10);
+            StartCoroutine(MoveCamera());
+        }
+
+        // Enemy Move
+        if (playerController.isPlayerAttack || playerController.isPlayerMove)
+        {
+            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+            foreach (GameObject enemy in enemies)
+            {
+                enemy.GetComponent<EnemyController>().TakeAction();
+            }
+        }
+
+        playerController.isPlayerAttack = false;
+        playerController.isPlayerMove = false;
+
+        StartCoroutine(DetectTurnEnd());
+    }
+
+    IEnumerator MoveCamera()
+    {
+        while (isCameraMoving)
         {
             float interpolationRatio = (float)cameraMoveElapsedFrames / cameraMoveInterpolationFramesCount;
 
@@ -45,29 +120,27 @@ public class TurnManager : MonoBehaviour
                 isCameraMoving = false;
                 cameraPrevPos = cameraCurrentPos;
             }
-        }
 
-        if (!isCameraMoving)
-        {
-            isReadyNextMove = true;
+            yield return null;
         }
 
     }
 
-    public void ProcessTurn()
+
+    IEnumerator DetectTurnEnd()
     {
-        isReadyNextMove = false;
+        yield return new WaitForSeconds(0.15f);
 
-        // Camera Move
-        isCameraMoving = true;
-        cameraCurrentPos = new Vector3(player.transform.position.x, player.transform.position.y, -10);
-
-        // Enemy Move
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-
-        foreach (GameObject enemy in enemies)
+        while (!isReadyNextMove)
         {
-            enemy.GetComponent<EnemyController>().TakeAction();
+            if (!isCameraMoving && !isAttackPhase)
+            {
+                isReadyNextMove = true;
+            } else
+            {
+                yield return null;
+            }
         }
+
     }
 }
