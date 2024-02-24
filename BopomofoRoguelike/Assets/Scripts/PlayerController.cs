@@ -1,13 +1,18 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
     public bool isPlayerReady = false;
     public bool isPlayerAttack = false;
     public bool isPlayerMove = false;
+    public int hp = 10;
+    public Slider slider;
     public int[] playerPosition;
+    private TextMeshProUGUI textMessage;
     private DungeonGenerator dungeonGenerator;
     private int[,] field;
     private TurnManager turnManager;
@@ -17,7 +22,8 @@ public class PlayerController : MonoBehaviour
     {
         dungeonGenerator = GameObject.Find("Dungeon").GetComponent<DungeonGenerator>();
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
-        animator = transform.GetChild(0).GetComponent<Animator>(); ;
+        textMessage = GameObject.Find("Message").GetComponent<TextMeshProUGUI>();
+        animator = transform.GetChild(0).GetComponent<Animator>();
 
         field = dungeonGenerator.field;
         for (int i = 0; i < DungeonGenerator.dungeonSize; i++)
@@ -34,6 +40,8 @@ public class PlayerController : MonoBehaviour
         turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
         gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
         isPlayerMove = true;
+        slider.maxValue = hp;
+        slider.value = hp;
 
         turnManager.ProcessTurn();
     }
@@ -119,5 +127,12 @@ public class PlayerController : MonoBehaviour
                 animator.Play("PlayerAttack");
             }
         }
+    }
+
+    public void DecreaceHP(int damage)
+    {
+        hp -= damage;
+        textMessage.SetText($"{damage}のダメージ！");
+        slider.value = hp;
     }
 }

@@ -124,7 +124,8 @@ public class DungeonGenerator : MonoBehaviour
         for (int i = 0; i < 50; i++)
         {
             int randomIndex = Random.Range(0, availableCell.Count());
-            GameObject enemyInstance = Instantiate(enemy, new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity);
+            GameObject enemyInstance = Instantiate(enemy, new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity) as GameObject;
+            enemyInstance.transform.GetChild(0).GetComponent<SpriteRenderer>().material.color = new Color(Random.Range(0, 256) / 255f, Random.Range(0, 256) / 255f, Random.Range(0, 256 / 255f), Random.Range(0, 156 / 155f) + 100);
             enemyInstance.GetComponent<EnemyController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
             turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]] = enemyInstance;
 
