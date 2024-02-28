@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public bool isPlayerMove = false;
     public int hp = 10;
     public Slider slider;
+    public GameObject menuPanel;
     public int[] playerPosition;
     private TextMeshProUGUI textMessage;
     private DungeonGenerator dungeonGenerator;
@@ -49,7 +50,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (turnManager.isReadyNextMove)
+        if (turnManager.isReadyNextMove && true)
         {
             if (Input.GetKey("up"))
             {
