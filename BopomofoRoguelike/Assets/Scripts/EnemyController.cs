@@ -64,7 +64,7 @@ public class EnemyController : MonoBehaviour
             textMessage.SetText("モンスターの攻撃！");
             gameObject.transform.GetChild(0).GetComponent<Animator>().Play("PlayerAttack");
             yield return new WaitForSeconds(0.3f);
-            player.GetComponent<PlayerController>().DecreaceHP(Random.Range(1, 4));
+            player.GetComponent<PlayerController>().DecreaseHP(Random.Range(1, 4));
 
             yield return new WaitForSeconds(0.5f);
 

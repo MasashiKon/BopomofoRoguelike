@@ -17,6 +17,7 @@ public class PlayerController : MonoBehaviour
     private DungeonGenerator dungeonGenerator;
     private int[,] field;
     private TurnManager turnManager;
+    private UIManager uiManager;
     private Animator animator;
     // Start is called before the first frame update
     void Start()
@@ -24,6 +25,7 @@ public class PlayerController : MonoBehaviour
         dungeonGenerator = GameObject.Find("Dungeon").GetComponent<DungeonGenerator>();
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
         textMessage = GameObject.Find("Message").GetComponent<TextMeshProUGUI>();
+        uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
         animator = transform.GetChild(0).GetComponent<Animator>();
 
         field = dungeonGenerator.field;
@@ -50,7 +52,7 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (turnManager.isReadyNextMove && true)
+        if (turnManager.isReadyNextMove && !uiManager.isPaused)
         {
             if (Input.GetKey("up"))
             {
@@ -130,10 +132,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void DecreaceHP(int damage)
+    public void DecreaseHP(int damage)
     {
         hp -= damage;
         textMessage.SetText($"{damage}のダメージ！");
         slider.value = hp;
+    }
+
+    public void IncreaseHP(int healAmount)
+    {
+        hp += healAmount;
+        textMessage.SetText($"{healAmount}回復した！");
+        slider.value = hp;
+        StartCoroutine(WaitAndEraseText());
+    }
+
+    IEnumerator WaitAndEraseText()
+    {
+        yield return new WaitForSeconds(0.5f);
+        textMessage.SetText("");
     }
 }
