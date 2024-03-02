@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
     public bool isPlayerReady = false;
     public bool isPlayerAttack = false;
     public bool isPlayerMove = false;
+    public bool isPlayerUseItem = false;
     public int hp = 10;
     public Slider slider;
     public GameObject menuPanel;
@@ -40,7 +41,7 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
+        turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
         gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
         isPlayerMove = true;
         slider.maxValue = hp;
@@ -58,11 +59,18 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
-                if (field[playerPosition[0] - 1, playerPosition[1]] != 0 && turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1]] == null)
+                if (field[playerPosition[0] - 1, playerPosition[1]] != 0 && (turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1]] == null || !turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1]].Exists(ob => ob.CompareTag("Enemy"))))
                 {
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
                     playerPosition[0]--;
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     isPlayerMove = true;
 
@@ -75,11 +83,18 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
-                if (field[playerPosition[0] + 1, playerPosition[1]] != 0 && turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1]] == null)
+                if (field[playerPosition[0] + 1, playerPosition[1]] != 0 && (turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1]] == null || !turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1]].Exists(ob => ob.CompareTag("Enemy"))))
                 {
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
                     playerPosition[0]++;
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     isPlayerMove = true;
 
@@ -92,11 +107,18 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
-                if (field[playerPosition[0], playerPosition[1] - 1] != 0 && turnManager.objectInfo[playerPosition[0], playerPosition[1] - 1] == null)
+                if (field[playerPosition[0], playerPosition[1] - 1] != 0 && (turnManager.objectInfo[playerPosition[0], playerPosition[1] - 1] == null || !turnManager.objectInfo[playerPosition[0], playerPosition[1] - 1].Exists(ob => ob.CompareTag("Enemy"))))
                 {
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
                     playerPosition[1]--;
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     isPlayerMove = true;
 
@@ -109,16 +131,22 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 270);
-                if (field[playerPosition[0], playerPosition[1] + 1] != 0 && turnManager.objectInfo[playerPosition[0], playerPosition[1] + 1] == null)
+                if (field[playerPosition[0], playerPosition[1] + 1] != 0 && (turnManager.objectInfo[playerPosition[0], playerPosition[1] + 1] == null || !turnManager.objectInfo[playerPosition[0], playerPosition[1] + 1].Exists(ob => ob.CompareTag("Enemy"))))
                 {
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = null;
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
                     playerPosition[1]++;
-                    turnManager.objectInfo[playerPosition[0], playerPosition[1]] = gameObject;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     isPlayerMove = true;
 
                 }
-
                 turnManager.ProcessTurn();
 
             }
@@ -151,5 +179,6 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(0.5f);
         textMessage.SetText("");
+
     }
 }

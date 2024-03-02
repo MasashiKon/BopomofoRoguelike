@@ -7,10 +7,11 @@ public class TurnManager : MonoBehaviour
 {
     public bool isReadyNextMove = false;
     public bool isAttackPhase = false;
+    public bool isPlayerMovePhase = false;
     public bool areEnemiesMove = false;
     public GameObject mainCamera;
     public GameObject player;
-    public GameObject[,] objectInfo = new GameObject[DungeonGenerator.dungeonSize, DungeonGenerator.dungeonSize];
+    public List<GameObject>[,] objectInfo = new List<GameObject>[DungeonGenerator.dungeonSize, DungeonGenerator.dungeonSize];
     public GameObject message;
 
     // Camera Move
@@ -20,6 +21,7 @@ public class TurnManager : MonoBehaviour
     private int cameraMoveInterpolationFramesCount = 60;
     private int cameraMoveElapsedFrames = 0;
     private int enemyInt = 0;
+    private UIManager uiManager;
 
     // Start is called before the first frame update
     void Start()
@@ -28,9 +30,10 @@ public class TurnManager : MonoBehaviour
         {
             for (int j = 0; j < DungeonGenerator.dungeonSize; j++)
             {
-                objectInfo[i, j] = null;
+                objectInfo[i, j] = new List<GameObject> { };
             }
         }
+        uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
     }
 
     // Update is called once per frame
@@ -49,22 +52,43 @@ public class TurnManager : MonoBehaviour
         {
             StartCoroutine(ProcessBattle(playerController, textMessage));
         }
+
         // Camera Move
         if (playerController.isPlayerMove)
         {
+            isPlayerMovePhase = true;
+            if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].Exists(ob => ob.CompareTag("Item")))
+            {
+                for (int i = 0; i < objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].Count; i++)
+                {
+                    if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]][i].CompareTag("Item"))
+                    {
+                        Destroy(objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]][i]);
+                        objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].RemoveAt(i);
+                        uiManager.items.Add(new Herb("やくそう"));
+                        StartCoroutine(DisplayItemGet("やくそう", textMessage));
+                    }
+                }
+            }
+            else
+            {
+                isPlayerMovePhase = false;
+            }
+
             isCameraMoving = true;
             cameraCurrentPos = new Vector3(player.transform.position.x, player.transform.position.y - 1, -10);
             StartCoroutine(MoveCamera());
         }
 
         // Enemy Move
-        if (playerController.isPlayerAttack || playerController.isPlayerMove)
+        if (playerController.isPlayerAttack || playerController.isPlayerMove || playerController.isPlayerUseItem)
         {
             StartCoroutine(ProcessEnemies());
         }
 
         playerController.isPlayerAttack = false;
         playerController.isPlayerMove = false;
+        playerController.isPlayerUseItem = false;
 
         StartCoroutine(DetectTurnEnd());
     }
@@ -73,61 +97,90 @@ public class TurnManager : MonoBehaviour
     {
         if (player.transform.eulerAngles.z == 0)
         {
-            if (objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]] && objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]].CompareTag("Enemy"))
+            if (objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]].Count != 0)
             {
-                int damage = Random.Range(3, 6);
-                textMessage.SetText("プレイヤーの攻撃！");
-                yield return new WaitForSeconds(0.3f);
-                objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]].GetComponent<EnemyController>().DecreaceHP(damage);
+                foreach (GameObject enemy in objectInfo[playerController.playerPosition[0] - 1, playerController.playerPosition[1]])
+                {
+                    if (enemy.CompareTag("Enemy"))
+                    {
+                        int damage = Random.Range(3, 6);
+                        textMessage.SetText("プレイヤーの攻撃！");
+                        yield return new WaitForSeconds(0.3f);
 
-                yield return new WaitForSeconds(0.5f);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
 
-                textMessage.SetText("");
+                        yield return new WaitForSeconds(0.5f);
+
+                        textMessage.SetText("");
+                        break;
+                    }
+                }
             }
         }
         else if (player.transform.eulerAngles.z == 90)
         {
-            if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1] && objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1].CompareTag("Enemy"))
+            if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1].Count != 0)
             {
-                int damage = Random.Range(3, 6);
-                textMessage.SetText("プレイヤーの攻撃！");
-                yield return new WaitForSeconds(0.3f);
-                objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1].GetComponent<EnemyController>().DecreaceHP(damage);
+                foreach (GameObject enemy in objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] - 1])
+                {
+                    if (enemy.CompareTag("Enemy"))
+                    {
+                        int damage = Random.Range(3, 6);
+                        textMessage.SetText("プレイヤーの攻撃！");
+                        yield return new WaitForSeconds(0.3f);
 
-                yield return new WaitForSeconds(0.5f);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
 
-                textMessage.SetText("");
+                        yield return new WaitForSeconds(0.5f);
+
+                        textMessage.SetText("");
+                        break;
+                    }
+                }
             }
-
         }
         else if (player.transform.eulerAngles.z == 180)
         {
-
-            if (objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]] && objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]].CompareTag("Enemy"))
+            if (objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]].Count != 0)
             {
-                int damage = Random.Range(3, 6);
-                textMessage.SetText("プレイヤーの攻撃！");
-                yield return new WaitForSeconds(0.3f);
-                objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]].GetComponent<EnemyController>().DecreaceHP(damage);
+                foreach (GameObject enemy in objectInfo[playerController.playerPosition[0] + 1, playerController.playerPosition[1]])
+                {
+                    if (enemy.CompareTag("Enemy"))
+                    {
+                        int damage = Random.Range(3, 6);
+                        textMessage.SetText("プレイヤーの攻撃！");
+                        yield return new WaitForSeconds(0.3f);
 
-                yield return new WaitForSeconds(0.5f);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
 
-                textMessage.SetText("");
+                        yield return new WaitForSeconds(0.5f);
+
+                        textMessage.SetText("");
+                        break;
+                    }
+                }
             }
-
         }
         else if (player.transform.eulerAngles.z == 270)
         {
-            if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1] && objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1].CompareTag("Enemy"))
+            if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1].Count != 0)
             {
-                int damage = Random.Range(3, 6);
-                textMessage.SetText("プレイヤーの攻撃！");
-                yield return new WaitForSeconds(0.3f);
-                objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1].GetComponent<EnemyController>().DecreaceHP(damage);
+                foreach (GameObject enemy in objectInfo[playerController.playerPosition[0], playerController.playerPosition[1] + 1])
+                {
+                    if (enemy.CompareTag("Enemy"))
+                    {
+                        int damage = Random.Range(3, 6);
+                        textMessage.SetText("プレイヤーの攻撃！");
+                        yield return new WaitForSeconds(0.3f);
 
-                yield return new WaitForSeconds(0.5f);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
 
-                textMessage.SetText("");
+                        yield return new WaitForSeconds(0.5f);
+
+                        textMessage.SetText("");
+                        break;
+                    }
+                }
             }
         }
         isAttackPhase = false;
@@ -176,7 +229,7 @@ public class TurnManager : MonoBehaviour
 
     IEnumerator ProcessEnemies()
     {
-        while (isAttackPhase) yield return null;
+        while (isAttackPhase || isPlayerMovePhase) yield return null;
         areEnemiesMove = true;
 
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -204,5 +257,15 @@ public class TurnManager : MonoBehaviour
         }
 
         areEnemiesMove = false;
+    }
+
+    IEnumerator DisplayItemGet(string item, TextMeshProUGUI textMessage)
+    {
+        textMessage.SetText($"{item}を拾った");
+
+        yield return new WaitForSeconds(0.5f);
+
+        textMessage.SetText("");
+        isPlayerMovePhase = false;
     }
 }

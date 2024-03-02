@@ -12,12 +12,13 @@ public class MenuManager : MonoBehaviour
     public GameObject commandPanel;
     public GameObject commandSlot;
     public bool isFocused = true;
-    private List<Item> items;
+    public List<Item> items;
     private GameObject currentItem;
-    private int itemIndex = 0;
+    public int itemIndex = 0;
     private RectTransform content;
     private PlayerController playerController;
     private CommandPanelManager commandPanelManager;
+    private bool firstActive = true;
 
     // Start is called before the first frame update
     void Start()
@@ -37,15 +38,19 @@ public class MenuManager : MonoBehaviour
             rectTransform.offsetMax = new Vector2(0, rectTransform.offsetMax.y);
         }
 
-        GameObject.FindGameObjectsWithTag("ItemSlot")[0].GetComponent<ItemSlotManeger>().MouseOver();
+        if (GameObject.FindGameObjectsWithTag("ItemSlot").Length != 0)
+        {
+            GameObject.FindGameObjectsWithTag("ItemSlot")[0].GetComponent<ItemSlotManeger>().MouseOver();
+        }
 
         isFocused = true;
+        firstActive = false;
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isFocused) return;
+        if (!isFocused || items.Count <= 0) return;
         if (Input.GetKeyDown("down") || Input.GetKeyDown("f"))
         {
             if (GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex])
@@ -56,7 +61,6 @@ public class MenuManager : MonoBehaviour
             itemIndex = (itemIndex + 1) % items.Count;
             GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex].GetComponent<ItemSlotManeger>().MouseOver();
 
-            items = uiManager.GetComponent<UIManager>().items;
             RectTransform menuRectTransform = gameObject.GetComponent<RectTransform>();
             float viewPortHeight = FindObjectOfType<Canvas>().GetComponent<RectTransform>().sizeDelta.y - Mathf.Abs(menuRectTransform.offsetMax.y) - menuRectTransform.offsetMin.y;
             float scrollHeight = content.sizeDelta.y - GameObject.Find("Item Viewport").GetComponent<RectTransform>().sizeDelta.y;
@@ -78,7 +82,6 @@ public class MenuManager : MonoBehaviour
 
             itemIndex = itemIndex - 1 >= 0 ? (itemIndex - 1) % items.Count : items.Count - 1;
             GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex].GetComponent<ItemSlotManeger>().MouseOver();
-            items = uiManager.GetComponent<UIManager>().items;
             RectTransform menuRectTransform = gameObject.GetComponent<RectTransform>();
             float viewPortHeight = FindObjectOfType<Canvas>().GetComponent<RectTransform>().sizeDelta.y - Mathf.Abs(menuRectTransform.offsetMax.y) - menuRectTransform.offsetMin.y;
             float scrollHeight = content.sizeDelta.y - GameObject.Find("Item Viewport").GetComponent<RectTransform>().sizeDelta.y;
@@ -91,19 +94,47 @@ public class MenuManager : MonoBehaviour
                 GameObject.Find("Item Scroll View").GetComponent<ScrollRect>().verticalNormalizedPosition = 1f - slotUnit * itemIndex;
             }
         }
-        else if (Input.GetKeyDown("return"))
+        else if ((Input.GetKeyDown("return") || Input.GetKeyDown("right")) && !commandPanelManager.isFocused)
         {
-            //GameObject itemInstence = Instantiate(commandSlot, commandPanel.transform.position, Quaternion.identity);
-            //itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("Use");
-            //itemInstence.transform.SetParent(commandPanel.transform);
-            //RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
-            //Debug.Log(rectTransform.offsetMax.y);
-            //rectTransform.offsetMax = new Vector2(0, 0);
-            //rectTransform.offsetMin = new Vector2(0, -50);
-            //items[itemIndex].Use(playerController, gameObject);
-            commandPanelManager.GenerateCommands();
+            commandPanelManager.DestroyAllCommands();
             commandPanelManager.item = items[itemIndex];
+            commandPanelManager.itemIndex = itemIndex;
+            commandPanelManager.GenerateCommands();
             isFocused = false;
+        }
+    }
+
+    public void RerenderItems()
+    {
+        if (firstActive) return;
+        for (int i = 0; i < scrollPort.transform.childCount; i++)
+        {
+            Destroy(scrollPort.transform.GetChild(i).gameObject);
+        }
+
+        content.sizeDelta = new Vector2(content.sizeDelta.x, items.Count * 50);
+        if (items.Count <= 0) return;
+        for (int i = 0; i < items.Count; i++)
+        {
+            GameObject itemInstence = Instantiate(itemSlot, gameObject.transform.position, Quaternion.identity);
+            itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(items[i].name);
+            itemInstence.transform.SetParent(scrollPort.transform);
+            RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
+            rectTransform.anchoredPosition = new Vector2(0, 50 * -i);
+            rectTransform.offsetMax = new Vector2(0, rectTransform.offsetMax.y);
+        }
+
+        StartCoroutine(WaitAndChangeColor());
+
+        isFocused = true;
+    }
+
+    IEnumerator WaitAndChangeColor()
+    {
+        yield return new WaitForEndOfFrame();
+        if (GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex])
+        {
+            GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex].GetComponent<ItemSlotManeger>().MouseOver();
         }
     }
 }

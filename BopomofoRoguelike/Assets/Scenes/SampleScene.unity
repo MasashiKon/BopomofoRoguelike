@@ -330,6 +330,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isReadyNextMove: 0
   isAttackPhase: 0
+  isPlayerMovePhase: 0
   areEnemiesMove: 0
   mainCamera: {fileID: 519420028}
   player: {fileID: 2080233508}
@@ -430,6 +431,7 @@ MonoBehaviour:
   commandPanel: {fileID: 557376818}
   commandSlot: {fileID: 2198615544366701608, guid: d781eeb7d79e54b45924d58b335bbad9, type: 3}
   isFocused: 0
+  itemIndex: 0
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -611,6 +613,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   commandSlot: {fileID: 2198615544366701608, guid: d781eeb7d79e54b45924d58b335bbad9, type: 3}
+  uiManager: {fileID: 0}
   isFocused: 0
 --- !u!1 &557932017
 GameObject:
@@ -1540,6 +1543,7 @@ MonoBehaviour:
   start: {fileID: 4906096959846375642, guid: 9ff0d2d83ec724e6ca5419ee3f01a167, type: 3}
   player: {fileID: 2080233508}
   enemy: {fileID: 8072242768054600945, guid: aef179ecdae6a4dad8142c259bc25e8a, type: 3}
+  item: {fileID: 6234373936922331159, guid: cc3a9638227ea46879904ad6ff87f231, type: 3}
 --- !u!1 &1538908071
 GameObject:
   m_ObjectHideFlags: 0
@@ -1948,6 +1952,7 @@ MonoBehaviour:
   isPlayerReady: 0
   isPlayerAttack: 0
   isPlayerMove: 0
+  isPlayerUseItem: 0
   hp: 10
   slider: {fileID: 606790852}
   menuPanel: {fileID: 0}

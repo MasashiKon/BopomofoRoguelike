@@ -10,11 +10,7 @@ public class UIManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        items.Add(new Herb("Herb"));
-        for (int i = 0; i < 19; i++)
-        {
-            items.Add(new Item("Sample Item"));
-        }
+
     }
 
     // Update is called once per frame
@@ -22,8 +18,18 @@ public class UIManager : MonoBehaviour
     {
         if (Input.GetKeyDown("tab"))
         {
-            isPaused = true;
+            isPaused = !isPaused;
+            if (!isPaused)
+            {
+                CommandPanelManager commandPanelManager = GameObject.Find("Command Panel").GetComponent<CommandPanelManager>();
+                commandPanelManager.DestroyAllCommands();
+                commandPanelManager.isFocused = false;
+            }
             menuPanel.SetActive(!menuPanel.activeSelf);
+            if (isPaused)
+            {
+                menuPanel.GetComponent<MenuManager>().RerenderItems();
+            }
         }
     }
 }

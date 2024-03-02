@@ -13,6 +13,13 @@ public class EnemyController : MonoBehaviour
         finishTurn
     }
 
+    enum Direction
+    {
+        above,
+        right,
+        below,
+        left
+    }
     public List<int> pos;
     public EnemyState state = EnemyState.waiting;
 
@@ -43,24 +50,54 @@ public class EnemyController : MonoBehaviour
         state = EnemyState.takingAction;
 
         // Attack
-        if ((turnManager.objectInfo[pos[0] + 1, pos[1]] && turnManager.objectInfo[pos[0] + 1, pos[1]].CompareTag("Player")) || (turnManager.objectInfo[pos[0] - 1, pos[1]] && turnManager.objectInfo[pos[0] - 1, pos[1]].CompareTag("Player")) || (turnManager.objectInfo[pos[0], pos[1] + 1] && turnManager.objectInfo[pos[0], pos[1] + 1].CompareTag("Player")) || (turnManager.objectInfo[pos[0], pos[1] - 1] && turnManager.objectInfo[pos[0], pos[1] - 1].CompareTag("Player")))
+        bool isPlayerAdjacent = false;
+        foreach (GameObject anyOb in turnManager.objectInfo[pos[0] + 1, pos[1]])
         {
-            if (turnManager.objectInfo[pos[0] + 1, pos[1]] && turnManager.objectInfo[pos[0] + 1, pos[1]].CompareTag("Player"))
+            if (anyOb.CompareTag("Player"))
             {
+                isPlayerAdjacent = true;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
             }
-            else if (turnManager.objectInfo[pos[0] - 1, pos[1]] && turnManager.objectInfo[pos[0] - 1, pos[1]].CompareTag("Player"))
+        }
+        if (!isPlayerAdjacent)
+        {
+            foreach (GameObject anyOb in turnManager.objectInfo[pos[0] - 1, pos[1]])
             {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+                if (anyOb.CompareTag("Player"))
+                {
+                    isPlayerAdjacent = true;
+                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
+                }
             }
-            else if (turnManager.objectInfo[pos[0], pos[1] + 1] && turnManager.objectInfo[pos[0], pos[1] + 1].CompareTag("Player"))
+
+            if (!isPlayerAdjacent)
             {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 270);
+                foreach (GameObject anyOb in turnManager.objectInfo[pos[0], pos[1] + 1])
+                {
+                    if (anyOb.CompareTag("Player"))
+                    {
+                        isPlayerAdjacent = true;
+                        gameObject.transform.rotation = Quaternion.Euler(0, 0, 270);
+                    }
+                }
+                if (!isPlayerAdjacent)
+                {
+                    foreach (GameObject anyOb in turnManager.objectInfo[pos[0], pos[1] - 1])
+                    {
+                        if (anyOb.CompareTag("Player"))
+                        {
+                            isPlayerAdjacent = true;
+                            gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
+                        }
+                    }
+                }
+
             }
-            else if (turnManager.objectInfo[pos[0], pos[1] - 1] && turnManager.objectInfo[pos[0], pos[1] - 1].CompareTag("Player"))
-            {
-                gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
-            }
+
+        }
+
+        if (isPlayerAdjacent)
+        {
             textMessage.SetText("モンスターの攻撃！");
             gameObject.transform.GetChild(0).GetComponent<Animator>().Play("PlayerAttack");
             yield return new WaitForSeconds(0.3f);
@@ -75,19 +112,19 @@ public class EnemyController : MonoBehaviour
         {
             // Move
             List<int[]> availableCell = new List<int[]>();
-            if (field[pos[0] + 1, pos[1]] != 0 && turnManager.objectInfo[pos[0] + 1, pos[1]] == null)
+            if (field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
             {
                 availableCell.Add(new int[] { pos[0] + 1, pos[1] });
             }
-            if (field[pos[0] - 1, pos[1]] != 0 && turnManager.objectInfo[pos[0] - 1, pos[1]] == null)
+            if (field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
             {
                 availableCell.Add(new int[] { pos[0] - 1, pos[1] });
             }
-            if (field[pos[0], pos[1] + 1] != 0 && turnManager.objectInfo[pos[0], pos[1] + 1] == null)
+            if (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
             {
                 availableCell.Add(new int[] { pos[0], pos[1] + 1 });
             }
-            if (field[pos[0], pos[1] - 1] != 0 && turnManager.objectInfo[pos[0], pos[1] - 1] == null)
+            if (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
             {
                 availableCell.Add(new int[] { pos[0], pos[1] - 1 });
             }
@@ -97,9 +134,16 @@ public class EnemyController : MonoBehaviour
                 int randomIndex = Random.Range(0, availableCell.Count + 1);
                 if (randomIndex != availableCell.Count)
                 {
-                    turnManager.objectInfo[pos[0], pos[1]] = null;
+                    for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                        }
+
+                    }
                     pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
-                    turnManager.objectInfo[pos[0], pos[1]] = gameObject;
+                    turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
                     gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                 }
             }
@@ -114,7 +158,14 @@ public class EnemyController : MonoBehaviour
         textMessage.SetText($"{damage}のダメージ！");
         if (hp <= 0)
         {
-            turnManager.objectInfo[pos[0], pos[1]] = null;
+            for(int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+            {
+                if(turnManager.objectInfo[pos[0], pos[1]][i].CompareTag("Enemy"))
+                {
+                    turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    break;
+                }
+            }
             Destroy(gameObject);
         }
     }
