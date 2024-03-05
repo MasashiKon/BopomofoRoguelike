@@ -12,10 +12,10 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject start;
     public GameObject player;
     public GameObject enemy;
-    public GameObject item;
     public int[,] field = new int[dungeonSize, dungeonSize];
 
     private TurnManager turnManager;
+    private PrefabManager prefabManager;
     private List<int[]> route = new List<int[]>();
     private List<int[]> availableCell = new List<int[]>();
 
@@ -23,6 +23,7 @@ public class DungeonGenerator : MonoBehaviour
     void Start()
     {
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
+        prefabManager = GameObject.Find("Prefab Manager").GetComponent<PrefabManager>();
 
         for (int i = 0; i < dungeonSize; i++)
         {
@@ -122,10 +123,11 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
 
-        for (int i = 0; i < 50; i++)
+        for (int i = 0; i < 150; i++)
         {
             int randomIndex = Random.Range(0, availableCell.Count());
-            GameObject itemInstance = Instantiate(item, new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity);
+            int randomItemIndex = Random.Range(0, prefabManager.items.Length);
+            GameObject itemInstance = Instantiate(prefabManager.items[randomItemIndex], new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity);
             itemInstance.GetComponent<ItemController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
             turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]].Add(itemInstance);
         }

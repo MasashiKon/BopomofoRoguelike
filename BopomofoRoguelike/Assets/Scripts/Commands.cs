@@ -3,5 +3,6 @@ public enum Commands
 {
     Use,
     Dispose,
+    Put
 }
 

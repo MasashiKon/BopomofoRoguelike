@@ -12,7 +12,7 @@ public class MenuManager : MonoBehaviour
     public GameObject commandPanel;
     public GameObject commandSlot;
     public bool isFocused = true;
-    public List<Item> items;
+    public List<GameObject> items;
     private GameObject currentItem;
     public int itemIndex = 0;
     private RectTransform content;
@@ -31,7 +31,7 @@ public class MenuManager : MonoBehaviour
         for (int i = 0; i < items.Count; i++)
         {
             GameObject itemInstence = Instantiate(itemSlot, gameObject.transform.position, Quaternion.identity);
-            itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(items[i].name);
+            itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(items[i].GetComponent<Item>().GetNameTranslation(Language.Ja));
             itemInstence.transform.SetParent(scrollPort.transform);
             RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = new Vector2(0, 50 * -i);
@@ -53,7 +53,7 @@ public class MenuManager : MonoBehaviour
         if (!isFocused || items.Count <= 0) return;
         if (Input.GetKeyDown("down") || Input.GetKeyDown("f"))
         {
-            if (GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex])
+            if (GameObject.FindGameObjectsWithTag("ItemSlot").Length != 0)
             {
                 GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex].GetComponent<ItemSlotManeger>().MouseExit();
             }
@@ -75,6 +75,8 @@ public class MenuManager : MonoBehaviour
         }
         else if (Input.GetKeyDown("up") || Input.GetKeyDown("r"))
         {
+            Debug.Log(itemIndex);
+            Debug.Log(GameObject.FindGameObjectsWithTag("ItemSlot").Length);
             if (GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex])
             {
                 GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex].GetComponent<ItemSlotManeger>().MouseExit();
@@ -117,7 +119,7 @@ public class MenuManager : MonoBehaviour
         for (int i = 0; i < items.Count; i++)
         {
             GameObject itemInstence = Instantiate(itemSlot, gameObject.transform.position, Quaternion.identity);
-            itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(items[i].name);
+            itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(items[i].GetComponent<Item>().GetNameTranslation(Language.Ja));
             itemInstence.transform.SetParent(scrollPort.transform);
             RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = new Vector2(0, 50 * -i);
@@ -132,7 +134,7 @@ public class MenuManager : MonoBehaviour
     IEnumerator WaitAndChangeColor()
     {
         yield return new WaitForEndOfFrame();
-        if (GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex])
+        if (GameObject.FindGameObjectsWithTag("ItemSlot").Length != 0)
         {
             GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex].GetComponent<ItemSlotManeger>().MouseOver();
         }

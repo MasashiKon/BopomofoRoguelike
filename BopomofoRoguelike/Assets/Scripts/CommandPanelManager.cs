@@ -7,7 +7,7 @@ using UnityEngine.UI;
 public class CommandPanelManager : MonoBehaviour
 {
     public GameObject commandSlot;
-    public Item item;
+    public GameObject item;
     public int? itemIndex;
     public UIManager uiManager;
     public bool isFocused = false;
@@ -29,16 +29,21 @@ public class CommandPanelManager : MonoBehaviour
         if (!isFocused) return;
         if (Input.GetKeyDown("return") && item != null && itemIndex != null)
         {
-            if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetTranslation(Commands.Use, Language.Ja))
+            if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Use, Language.Ja))
             {
                 menu.GetComponent<MenuManager>().isFocused = true;
                 GameObject.Find("UI Manager").GetComponent<UIManager>().isPaused = false;
                 isFocused = false;
-                item.Use(playerController, menu, (int)itemIndex);
+                item.GetComponent<Item>().Use(playerController, menu, (int)itemIndex);
             }
-            else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetTranslation(Commands.Dispose, Language.Ja))
+            else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Dispose, Language.Ja))
             {
-                item.Dispose(menu, (int)itemIndex);
+                item.GetComponent<Item>().Dispose(menu, (int)itemIndex);
+                StartCoroutine(WaitOneFrame());
+            }
+            else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Put, Language.Ja))
+            {
+                item.GetComponent<Item>().Put(menu, (int)itemIndex);
                 StartCoroutine(WaitOneFrame());
             }
             item = null;
@@ -76,16 +81,20 @@ public class CommandPanelManager : MonoBehaviour
 
     public void GenerateCommands()
     {
-        for (int i = 0; i < item.GetCommands().Length; i++)
+        for (int i = 0; i < item.GetComponent<Item>().GetCommands().Length; i++)
         {
             GameObject itemInstence = Instantiate(commandSlot, transform.position, Quaternion.identity);
-            if (item.GetCommands()[i] == Commands.Use)
+            if (item.GetComponent<Item>().GetCommands()[i] == Commands.Use)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("使う");
             }
-            else if (item.GetCommands()[i] == Commands.Dispose)
+            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Dispose)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("捨てる");
+            }
+            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Put)
+            {
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("置く");
             }
             itemInstence.transform.SetParent(transform);
             RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();

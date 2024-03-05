@@ -13,6 +13,7 @@ public class TurnManager : MonoBehaviour
     public GameObject player;
     public List<GameObject>[,] objectInfo = new List<GameObject>[DungeonGenerator.dungeonSize, DungeonGenerator.dungeonSize];
     public GameObject message;
+    public GameObject[] prefabItems;
 
     // Camera Move
     private bool isCameraMoving = false;
@@ -22,6 +23,7 @@ public class TurnManager : MonoBehaviour
     private int cameraMoveElapsedFrames = 0;
     private int enemyInt = 0;
     private UIManager uiManager;
+    private PrefabManager prefabManager;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +36,7 @@ public class TurnManager : MonoBehaviour
             }
         }
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        prefabManager = GameObject.Find("Prefab Manager").GetComponent<PrefabManager>();
     }
 
     // Update is called once per frame
@@ -63,10 +66,20 @@ public class TurnManager : MonoBehaviour
                 {
                     if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]][i].CompareTag("Item"))
                     {
+
+                        GameObject targetItem = null;
+                        for (int j = 0; j < prefabManager.items.Length; j++)
+                        {
+                            if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]][i].name == prefabManager.items[j].name + "(Clone)")
+                            {
+                                targetItem = prefabManager.items[j];
+                            }
+                        }
+
                         Destroy(objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]][i]);
                         objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].RemoveAt(i);
-                        uiManager.items.Add(new Herb("やくそう"));
-                        StartCoroutine(DisplayItemGet("やくそう", textMessage));
+                        uiManager.items.Add(targetItem);
+                        StartCoroutine(DisplayItemGet(targetItem.GetComponent<Item>().GetNameTranslation(Language.Ja), textMessage));
                     }
                 }
             }
