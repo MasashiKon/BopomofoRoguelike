@@ -7,8 +7,11 @@ public class TurnManager : MonoBehaviour
 {
     public bool isReadyNextMove = false;
     public bool isAttackPhase = false;
+    public bool itItemProcessPhase = false;
     public bool isPlayerMovePhase = false;
     public bool areEnemiesMove = false;
+    public bool isPlayerThrowItem = false;
+    public int[] thrownItemPosition = new int[0];
     public GameObject mainCamera;
     public GameObject player;
     public List<GameObject>[,] objectInfo = new List<GameObject>[DungeonGenerator.dungeonSize, DungeonGenerator.dungeonSize];
@@ -24,6 +27,8 @@ public class TurnManager : MonoBehaviour
     private int enemyInt = 0;
     private UIManager uiManager;
     private PrefabManager prefabManager;
+    private DungeonGenerator dungeonGenerator;
+    private GameObject flyingItem;
 
     // Start is called before the first frame update
     void Start()
@@ -37,6 +42,7 @@ public class TurnManager : MonoBehaviour
         }
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
         prefabManager = GameObject.Find("Prefab Manager").GetComponent<PrefabManager>();
+        dungeonGenerator = GameObject.Find("Dungeon").GetComponent<DungeonGenerator>();
     }
 
     // Update is called once per frame
@@ -55,9 +61,14 @@ public class TurnManager : MonoBehaviour
         {
             StartCoroutine(ProcessBattle(playerController, textMessage));
         }
+        else if (isPlayerThrowItem)
+        {
+            itItemProcessPhase = true;
+            flyingItem = objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].Find(ob => ob.CompareTag("Item"));
+            StartCoroutine(FlyItem());
+        }
 
-        // Camera Move
-        if (playerController.isPlayerMove)
+        if (playerController.isPlayerMove && !isPlayerThrowItem)
         {
             isPlayerMovePhase = true;
             if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].Exists(ob => ob.CompareTag("Item")))
@@ -102,6 +113,7 @@ public class TurnManager : MonoBehaviour
         playerController.isPlayerAttack = false;
         playerController.isPlayerMove = false;
         playerController.isPlayerUseItem = false;
+        isPlayerThrowItem = false;
 
         StartCoroutine(DetectTurnEnd());
     }
@@ -227,7 +239,7 @@ public class TurnManager : MonoBehaviour
 
         while (!isReadyNextMove)
         {
-            if (!isCameraMoving && !isAttackPhase && !areEnemiesMove)
+            if (!isCameraMoving && !isAttackPhase && !areEnemiesMove && !itItemProcessPhase)
             {
                 enemyInt = 0;
                 isReadyNextMove = true;
@@ -242,7 +254,7 @@ public class TurnManager : MonoBehaviour
 
     IEnumerator ProcessEnemies()
     {
-        while (isAttackPhase || isPlayerMovePhase) yield return null;
+        while (isAttackPhase || isPlayerMovePhase || itItemProcessPhase) yield return null;
         areEnemiesMove = true;
 
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
@@ -280,5 +292,59 @@ public class TurnManager : MonoBehaviour
 
         textMessage.SetText("");
         isPlayerMovePhase = false;
+    }
+
+
+    IEnumerator FlyItem()
+    {
+        float direction = player.transform.rotation.eulerAngles.z;
+        float frameItem = 0.1f;
+
+        if (direction == 0)
+        {
+            while (dungeonGenerator.field[thrownItemPosition[0] - 1, thrownItemPosition[1]] != 0)
+            {
+                objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+                objectInfo[thrownItemPosition[0] - 1, thrownItemPosition[1]].Add(flyingItem);
+                thrownItemPosition = new int[] { thrownItemPosition[0] - 1, thrownItemPosition[1] };
+                flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                yield return new WaitForSeconds(frameItem);
+            }
+        }
+        else if (direction == 270)
+        {
+            while (dungeonGenerator.field[thrownItemPosition[0], thrownItemPosition[1] + 1] != 0)
+            {
+                objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+                objectInfo[thrownItemPosition[0], thrownItemPosition[1] + 1].Add(flyingItem);
+                thrownItemPosition = new int[] { thrownItemPosition[0], thrownItemPosition[1] + 1 };
+                flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                yield return new WaitForSeconds(frameItem);
+            }
+        }
+        else if (direction == 180)
+        {
+            while (dungeonGenerator.field[thrownItemPosition[0] + 1, thrownItemPosition[1]] != 0)
+            {
+                objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+                objectInfo[thrownItemPosition[0] + 1, thrownItemPosition[1]].Add(flyingItem);
+                thrownItemPosition = new int[] { thrownItemPosition[0] + 1, thrownItemPosition[1] };
+                flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                yield return new WaitForSeconds(frameItem);
+            }
+        }
+        else if (direction == 90)
+        {
+            while (dungeonGenerator.field[thrownItemPosition[0], thrownItemPosition[1] - 1] != 0)
+            {
+                objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+                objectInfo[thrownItemPosition[0], thrownItemPosition[1] - 1].Add(flyingItem);
+                thrownItemPosition = new int[] { thrownItemPosition[0], thrownItemPosition[1] - 1 };
+                flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                yield return new WaitForSeconds(frameItem);
+            }
+        }
+
+        itItemProcessPhase = false;
     }
 }

@@ -75,8 +75,6 @@ public class MenuManager : MonoBehaviour
         }
         else if (Input.GetKeyDown("up") || Input.GetKeyDown("r"))
         {
-            Debug.Log(itemIndex);
-            Debug.Log(GameObject.FindGameObjectsWithTag("ItemSlot").Length);
             if (GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex])
             {
                 GameObject.FindGameObjectsWithTag("ItemSlot")[itemIndex].GetComponent<ItemSlotManeger>().MouseExit();

@@ -46,6 +46,11 @@ public class CommandPanelManager : MonoBehaviour
                 item.GetComponent<Item>().Put(menu, (int)itemIndex);
                 StartCoroutine(WaitOneFrame());
             }
+            else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Throw, Language.Ja))
+            {
+                item.GetComponent<Item>().Throw(menu, (int)itemIndex, playerController.transform.rotation.eulerAngles.z);
+                StartCoroutine(WaitOneFrame());
+            }
             item = null;
             itemIndex = null;
             commandIndex = 0;
@@ -86,15 +91,19 @@ public class CommandPanelManager : MonoBehaviour
             GameObject itemInstence = Instantiate(commandSlot, transform.position, Quaternion.identity);
             if (item.GetComponent<Item>().GetCommands()[i] == Commands.Use)
             {
-                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("使う");
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Use, Language.Ja));
             }
             else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Dispose)
             {
-                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("捨てる");
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Dispose, Language.Ja));
             }
             else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Put)
             {
-                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText("置く");
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Put, Language.Ja));
+            }
+            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Throw)
+            {
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Throw, Language.Ja));
             }
             itemInstence.transform.SetParent(transform);
             RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();

@@ -111,3 +111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 97238a163c0c4427cba34e6e2a0b66d3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isThrown: 0
+  isFlying: 0
+  playerDirection: 0

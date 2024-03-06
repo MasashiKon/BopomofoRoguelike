@@ -6,7 +6,7 @@ public class Item : MonoBehaviour
 {
     public virtual Commands[] GetCommands()
     {
-        return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put };
+        return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw };
     }
 
     public virtual void Use(PlayerController player, GameObject gameObject, int index)
@@ -43,6 +43,25 @@ public class Item : MonoBehaviour
         }
     }
 
+    public virtual void Throw(GameObject menu, int index, float direction)
+    {
+        UIManager uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        uiManager.items.RemoveAt(index);
+        MenuManager menuManager = GameObject.Find("Menu Panel").GetComponent<MenuManager>();
+        menuManager.RerenderItems();
+        PlayerController playerController = GameObject.Find("Player Wrapper").GetComponent<PlayerController>();
+        TurnManager turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
+        GameObject item = Instantiate(gameObject, new Vector3(playerController.playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerController.playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1), Quaternion.identity);
+        turnManager.objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].Add(item);
+        if (uiManager.items.Count != 0 && menuManager.itemIndex == uiManager.items.Count)
+        {
+            menuManager.itemIndex = uiManager.items.Count - 1;
+        }
+        turnManager.isPlayerThrowItem = true;
+        turnManager.thrownItemPosition = new int[] { playerController.playerPosition[0], playerController.playerPosition[1] };
+        turnManager.ProcessTurn();
+    }
+
     public virtual string GetNameTranslation(Language lang)
     {
         switch (lang)
@@ -67,6 +86,8 @@ public class Item : MonoBehaviour
                     return "捨てる";
                 case Commands.Put:
                     return "置く";
+                case Commands.Throw:
+                    return "投げる";
             }
         }
         return "";
