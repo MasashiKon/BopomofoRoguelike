@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Item : MonoBehaviour
@@ -9,10 +10,19 @@ public class Item : MonoBehaviour
         return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw };
     }
 
-    public virtual void Use(PlayerController player, GameObject gameObject, int index)
+    public virtual void Use(PlayerController player, GameObject menu, int index)
     {
-        Debug.Log("The item used");
+
+        UIManager uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        uiManager.items.RemoveAt(index);
+        MenuManager menuManager = GameObject.Find("Menu Panel").GetComponent<MenuManager>();
+        menuManager.RerenderItems();
+        menuManager.itemIndex = 0;
         player.isPlayerUseItem = true;
+        Debug.Log("The item used");
+        menu.SetActive(false);
+        TurnManager turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
+        turnManager.ProcessTurn();
     }
 
     public virtual void Dispose(GameObject menu, int index)
@@ -41,6 +51,7 @@ public class Item : MonoBehaviour
         {
             menuManager.itemIndex = uiManager.items.Count - 1;
         }
+        menu.SetActive(false);
     }
 
     public virtual void Throw(GameObject menu, int index, float direction)
@@ -59,7 +70,17 @@ public class Item : MonoBehaviour
         }
         turnManager.isPlayerThrowItem = true;
         turnManager.thrownItemPosition = new int[] { playerController.playerPosition[0], playerController.playerPosition[1] };
+        menu.SetActive(false);
         turnManager.ProcessTurn();
+    }
+
+    public virtual void Collision(GameObject objectGotHit)
+    {
+        if (objectGotHit.CompareTag("Enemy"))
+        {
+            objectGotHit.GetComponent<EnemyController>().DecreaceHP(5);
+            Destroy(gameObject);
+        }
     }
 
     public virtual string GetNameTranslation(Language lang)

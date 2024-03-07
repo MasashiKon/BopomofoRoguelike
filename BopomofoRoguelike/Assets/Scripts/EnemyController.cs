@@ -152,10 +152,16 @@ public class EnemyController : MonoBehaviour
         state = EnemyState.finishTurn;
     }
 
+    public void IncreaceHP(int amountOfHeal)
+    {
+        hp += amountOfHeal;
+        textMessage.SetText($"モンスターは{amountOfHeal}回復した！");
+    }
+
     public void DecreaceHP(int damage)
     {
         hp -= damage;
-        textMessage.SetText($"{damage}のダメージ！");
+        textMessage.SetText($"モンスターに{damage}のダメージ！");
         if (hp <= 0)
         {
             for(int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)

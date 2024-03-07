@@ -18,6 +18,15 @@ public class Herb : Item
         turnManager.ProcessTurn();
     }
 
+    public override void Collision(GameObject objectGotHit)
+    {
+        if (objectGotHit.CompareTag("Enemy"))
+        {
+            objectGotHit.GetComponent<EnemyController>().IncreaceHP(5);
+            Destroy(gameObject);
+        }
+    }
+
     public override string GetNameTranslation(Language lang)
     {
         switch (lang)

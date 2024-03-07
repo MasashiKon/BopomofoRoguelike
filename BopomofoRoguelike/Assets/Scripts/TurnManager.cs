@@ -299,52 +299,102 @@ public class TurnManager : MonoBehaviour
     {
         float direction = player.transform.rotation.eulerAngles.z;
         float frameItem = 0.1f;
+        bool throwLoop = true;
 
         if (direction == 0)
         {
-            while (dungeonGenerator.field[thrownItemPosition[0] - 1, thrownItemPosition[1]] != 0)
+            while (throwLoop && dungeonGenerator.field[thrownItemPosition[0] - 1, thrownItemPosition[1]] != 0)
             {
                 objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                 objectInfo[thrownItemPosition[0] - 1, thrownItemPosition[1]].Add(flyingItem);
                 thrownItemPosition = new int[] { thrownItemPosition[0] - 1, thrownItemPosition[1] };
                 flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                for (int i = 0; i < objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Count; i++)
+                {
+                    if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
+                    {
+                        flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        throwLoop = false;
+                        break;
+                    }
+                }
                 yield return new WaitForSeconds(frameItem);
             }
+            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+            thrownItemPosition = new int[0];
+            flyingItem = null;
         }
         else if (direction == 270)
         {
-            while (dungeonGenerator.field[thrownItemPosition[0], thrownItemPosition[1] + 1] != 0)
+            while (throwLoop && dungeonGenerator.field[thrownItemPosition[0], thrownItemPosition[1] + 1] != 0)
             {
                 objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                 objectInfo[thrownItemPosition[0], thrownItemPosition[1] + 1].Add(flyingItem);
                 thrownItemPosition = new int[] { thrownItemPosition[0], thrownItemPosition[1] + 1 };
                 flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                for (int i = 0; i < objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Count; i++)
+                {
+                    if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
+                    {
+                        flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        throwLoop = false;
+                        break;
+                    }
+                }
                 yield return new WaitForSeconds(frameItem);
             }
+            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+            thrownItemPosition = new int[0];
+            flyingItem = null;
         }
         else if (direction == 180)
         {
-            while (dungeonGenerator.field[thrownItemPosition[0] + 1, thrownItemPosition[1]] != 0)
+            while (throwLoop && dungeonGenerator.field[thrownItemPosition[0] + 1, thrownItemPosition[1]] != 0)
             {
                 objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                 objectInfo[thrownItemPosition[0] + 1, thrownItemPosition[1]].Add(flyingItem);
                 thrownItemPosition = new int[] { thrownItemPosition[0] + 1, thrownItemPosition[1] };
                 flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                for (int i = 0; i < objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Count; i++)
+                {
+                    if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
+                    {
+                        flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        throwLoop = false;
+                        break;
+                    }
+                }
                 yield return new WaitForSeconds(frameItem);
             }
+            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+            thrownItemPosition = new int[0];
+            flyingItem = null;
         }
         else if (direction == 90)
         {
-            while (dungeonGenerator.field[thrownItemPosition[0], thrownItemPosition[1] - 1] != 0)
+            while (throwLoop && dungeonGenerator.field[thrownItemPosition[0], thrownItemPosition[1] - 1] != 0)
             {
                 objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                 objectInfo[thrownItemPosition[0], thrownItemPosition[1] - 1].Add(flyingItem);
                 thrownItemPosition = new int[] { thrownItemPosition[0], thrownItemPosition[1] - 1 };
                 flyingItem.transform.position = new Vector3(thrownItemPosition[1] - DungeonGenerator.dungeonSize / 2, thrownItemPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                for (int i = 0; i < objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Count; i++)
+                {
+                    if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
+                    {
+                        flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        throwLoop = false;
+                        break;
+                    }
+                }
                 yield return new WaitForSeconds(frameItem);
             }
+            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
+            thrownItemPosition = new int[0];
+            flyingItem = null;
         }
 
         itItemProcessPhase = false;
+        thrownItemPosition = new int[0];
     }
 }

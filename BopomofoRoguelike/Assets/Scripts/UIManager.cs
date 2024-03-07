@@ -19,7 +19,7 @@ public class UIManager : MonoBehaviour
         if (Input.GetKeyDown("tab"))
         {
             isPaused = !isPaused;
-            if (!isPaused)
+            if (!isPaused && GameObject.Find("Command Panel"))
             {
                 CommandPanelManager commandPanelManager = GameObject.Find("Command Panel").GetComponent<CommandPanelManager>();
                 commandPanelManager.DestroyAllCommands();
