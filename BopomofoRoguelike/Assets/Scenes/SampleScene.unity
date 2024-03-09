@@ -190,6 +190,8 @@ MonoBehaviour:
   items:
   - {fileID: 6234373936922331159, guid: cc3a9638227ea46879904ad6ff87f231, type: 3}
   - {fileID: 1268982166187769501, guid: 9c0ad290efbe246a28e5a4a43efde467, type: 3}
+  - {fileID: 3356344738279560542, guid: f16ad1901e08043439c67455b2d9347b, type: 3}
+  - {fileID: 1495342153525530817, guid: d68b248c7326449a08e56ed57c0b8101, type: 3}
 --- !u!4 &200190392
 Transform:
   m_ObjectHideFlags: 0
@@ -377,8 +379,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   isReadyNextMove: 0
   isAttackPhase: 0
+  itItemProcessPhase: 0
   isPlayerMovePhase: 0
   areEnemiesMove: 0
+  isPlayerThrowItem: 0
+  thrownItemPosition: 
   mainCamera: {fileID: 519420028}
   player: {fileID: 2080233508}
   message: {fileID: 1562650191}

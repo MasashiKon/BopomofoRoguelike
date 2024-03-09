@@ -54,6 +54,10 @@ public class CommandPanelManager : MonoBehaviour
                 item.GetComponent<Item>().Throw(menu, (int)itemIndex, playerController.transform.rotation.eulerAngles.z);
 
             }
+            else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Equip, Language.Ja))
+            {
+                Debug.Log("Do something");
+            }
             item = null;
             itemIndex = null;
             commandIndex = 0;
@@ -107,6 +111,10 @@ public class CommandPanelManager : MonoBehaviour
             else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Throw)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Throw, Language.Ja));
+            }
+            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Equip)
+            {
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Equip, Language.Ja));
             }
             itemInstence.transform.SetParent(transform);
             RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();

@@ -127,7 +127,7 @@ public class DungeonGenerator : MonoBehaviour
         {
             int randomIndex = Random.Range(0, availableCell.Count());
             int randomItemIndex = Random.Range(0, prefabManager.items.Length);
-            GameObject itemInstance = Instantiate(prefabManager.items[randomItemIndex], new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity);
+            GameObject itemInstance = Instantiate(prefabManager.items[randomItemIndex], new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), prefabManager.items[randomItemIndex].transform.rotation);
             itemInstance.GetComponent<ItemController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
             turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]].Add(itemInstance);
         }
