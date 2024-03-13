@@ -77,13 +77,12 @@ public class TurnManager : MonoBehaviour
                 {
                     if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]][i].CompareTag("Item"))
                     {
-
                         GameObject targetItem = null;
                         for (int j = 0; j < prefabManager.items.Length; j++)
                         {
                             if (objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]][i].name == prefabManager.items[j].name + "(Clone)")
                             {
-                                targetItem = prefabManager.items[j];
+                                targetItem = Instantiate(prefabManager.items[j]);
                             }
                         }
 
@@ -128,11 +127,12 @@ public class TurnManager : MonoBehaviour
                 {
                     if (enemy.CompareTag("Enemy"))
                     {
-                        int damage = Random.Range(3, 6);
+                        int damage = Random.Range(playerController.playerAttack, playerController.playerAttack + 3) + (playerController.sword?.GetSwordAttack() ?? 0);
+                        int calcDamage = damage - enemy.GetComponent<EnemyController>().enemyDefence > 1 ? damage - enemy.GetComponent<EnemyController>().enemyDefence : 1;
                         textMessage.SetText("プレイヤーの攻撃！");
                         yield return new WaitForSeconds(0.3f);
 
-                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(calcDamage);
 
                         yield return new WaitForSeconds(0.5f);
 
@@ -150,11 +150,12 @@ public class TurnManager : MonoBehaviour
                 {
                     if (enemy.CompareTag("Enemy"))
                     {
-                        int damage = Random.Range(3, 6);
+                        int damage = Random.Range(playerController.playerAttack, playerController.playerAttack + 3) + (playerController.sword?.GetSwordAttack() ?? 0);
+                        int calcDamage = damage - enemy.GetComponent<EnemyController>().enemyDefence > 1 ? damage - enemy.GetComponent<EnemyController>().enemyDefence : 1;
                         textMessage.SetText("プレイヤーの攻撃！");
                         yield return new WaitForSeconds(0.3f);
 
-                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(calcDamage);
 
                         yield return new WaitForSeconds(0.5f);
 
@@ -172,11 +173,12 @@ public class TurnManager : MonoBehaviour
                 {
                     if (enemy.CompareTag("Enemy"))
                     {
-                        int damage = Random.Range(3, 6);
+                        int damage = Random.Range(playerController.playerAttack, playerController.playerAttack + 3) + (playerController.sword?.GetSwordAttack() ?? 0);
+                        int calcDamage = damage - enemy.GetComponent<EnemyController>().enemyDefence > 1 ? damage - enemy.GetComponent<EnemyController>().enemyDefence : 1;
                         textMessage.SetText("プレイヤーの攻撃！");
                         yield return new WaitForSeconds(0.3f);
 
-                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(calcDamage);
 
                         yield return new WaitForSeconds(0.5f);
 
@@ -194,11 +196,12 @@ public class TurnManager : MonoBehaviour
                 {
                     if (enemy.CompareTag("Enemy"))
                     {
-                        int damage = Random.Range(3, 6);
+                        int damage = Random.Range(playerController.playerAttack, playerController.playerAttack + 3) + (playerController.sword?.GetSwordAttack() ?? 0);
+                        int calcDamage = damage - enemy.GetComponent<EnemyController>().enemyDefence > 1 ? damage - enemy.GetComponent<EnemyController>().enemyDefence : 1;
                         textMessage.SetText("プレイヤーの攻撃！");
                         yield return new WaitForSeconds(0.3f);
 
-                        enemy.GetComponent<EnemyController>().DecreaceHP(damage);
+                        enemy.GetComponent<EnemyController>().DecreaceHP(calcDamage);
 
                         yield return new WaitForSeconds(0.5f);
 
@@ -314,13 +317,13 @@ public class TurnManager : MonoBehaviour
                     if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
                     {
                         flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                         throwLoop = false;
                         break;
                     }
                 }
                 yield return new WaitForSeconds(frameItem);
             }
-            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
             thrownItemPosition = new int[0];
             flyingItem = null;
         }
@@ -337,13 +340,13 @@ public class TurnManager : MonoBehaviour
                     if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
                     {
                         flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                         throwLoop = false;
                         break;
                     }
                 }
                 yield return new WaitForSeconds(frameItem);
             }
-            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
             thrownItemPosition = new int[0];
             flyingItem = null;
         }
@@ -360,13 +363,13 @@ public class TurnManager : MonoBehaviour
                     if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
                     {
                         flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                         throwLoop = false;
                         break;
                     }
                 }
                 yield return new WaitForSeconds(frameItem);
             }
-            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
             thrownItemPosition = new int[0];
             flyingItem = null;
         }
@@ -383,13 +386,13 @@ public class TurnManager : MonoBehaviour
                     if (objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i].CompareTag("Enemy"))
                     {
                         flyingItem.GetComponent<Item>().Collision(objectInfo[thrownItemPosition[0], thrownItemPosition[1]][i]);
+                        objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
                         throwLoop = false;
                         break;
                     }
                 }
                 yield return new WaitForSeconds(frameItem);
             }
-            objectInfo[thrownItemPosition[0], thrownItemPosition[1]].Remove(flyingItem);
             thrownItemPosition = new int[0];
             flyingItem = null;
         }

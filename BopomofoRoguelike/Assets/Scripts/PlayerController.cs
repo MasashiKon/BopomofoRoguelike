@@ -10,10 +10,14 @@ public class PlayerController : MonoBehaviour
     public bool isPlayerAttack = false;
     public bool isPlayerMove = false;
     public bool isPlayerUseItem = false;
-    public int hp = 10;
+    public int hp = 15;
     public Slider slider;
     public GameObject menuPanel;
     public int[] playerPosition;
+    public int playerAttack = 3;
+    public Sword sword;
+    public int playerDefence = 0;
+    public Shield shield;
     private TextMeshProUGUI textMessage;
     private DungeonGenerator dungeonGenerator;
     private int[,] field;
@@ -162,8 +166,9 @@ public class PlayerController : MonoBehaviour
 
     public void DecreaseHP(int damage)
     {
-        hp -= damage;
-        textMessage.SetText($"{damage}のダメージ！");
+        int calcedDamage = damage - playerDefence - (shield?.GetSwordDefence() ?? 0) > 1 ? damage - playerDefence - (shield?.GetSwordDefence() ?? 0) : 1;
+        hp -= calcedDamage > 1 ? calcedDamage : 1;
+        textMessage.SetText($"{calcedDamage}のダメージ！");
         slider.value = hp;
     }
 

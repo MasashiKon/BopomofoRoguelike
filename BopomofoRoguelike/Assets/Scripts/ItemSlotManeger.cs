@@ -3,9 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEditor.Progress;
 
 public class ItemSlotManeger : MonoBehaviour
 {
+    public bool isEquiped = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -23,13 +26,35 @@ public class ItemSlotManeger : MonoBehaviour
         GameObject[] items = GameObject.FindGameObjectsWithTag("ItemSlot");
         foreach (GameObject item in items)
         {
-            item.GetComponent<Image>().color = new Color(255 / 255f, 255 / 255f, 255 / 255f, 100 / 255f);
+            if (!isEquiped)
+            {
+                item.GetComponent<Image>().color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 100f / 255f);
+            }
+            else
+            {
+                item.GetComponent<Image>().color = new Color(255f / 255f, 200f / 255f, 255f / 255f, 100f / 255f);
+            }
+
         }
-        gameObject.GetComponent<Image>().color = new Color(255 / 255f, 200 / 255f, 200 / 255f, 220 / 255f);
+        if (!isEquiped)
+        {
+            gameObject.GetComponent<Image>().color = new Color(255f / 255f, 200f / 255f, 200f / 255f, 220f / 255f);
+        }
+        else
+        {
+            gameObject.GetComponent<Image>().color = new Color(255f / 255f, 200f / 255f, 200f / 255f, 220f / 255f);
+        }
     }
 
     public void MouseExit()
     {
-        gameObject.GetComponent<Image>().color = new Color(255 / 255f, 255 / 255f, 255 / 255f, 100 / 255f);
+        if (!isEquiped)
+        {
+            gameObject.GetComponent<Image>().color = new Color(255f / 255f, 255f / 255f, 255f / 255f, 100f / 255f);
+        }
+        else
+        {
+            gameObject.GetComponent<Image>().color = new Color(255f / 255f, 200f / 255f, 200f / 255f, 100f / 255f);
+        }
     }
 }

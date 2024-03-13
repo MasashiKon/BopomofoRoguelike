@@ -22,6 +22,7 @@ public class EnemyController : MonoBehaviour
     }
     public List<int> pos;
     public EnemyState state = EnemyState.waiting;
+    public int enemyDefence = 1;
 
     private PlayerController player;
     private TextMeshProUGUI textMessage;
@@ -101,7 +102,7 @@ public class EnemyController : MonoBehaviour
             textMessage.SetText("モンスターの攻撃！");
             gameObject.transform.GetChild(0).GetComponent<Animator>().Play("PlayerAttack");
             yield return new WaitForSeconds(0.3f);
-            player.GetComponent<PlayerController>().DecreaseHP(Random.Range(1, 4));
+            player.GetComponent<PlayerController>().DecreaseHP(Random.Range(3, 6));
 
             yield return new WaitForSeconds(0.5f);
 

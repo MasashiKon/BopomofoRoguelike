@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
+    public bool isEquiped = false;
+
     public virtual Commands[] GetCommands()
     {
         return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw, Commands.Equip };
@@ -41,11 +43,12 @@ public class Item : MonoBehaviour
     {
         UIManager uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
         uiManager.items.RemoveAt(index);
+        uiManager.isPaused = false;
         MenuManager menuManager = GameObject.Find("Menu Panel").GetComponent<MenuManager>();
         menuManager.RerenderItems();
         PlayerController playerController = GameObject.Find("Player Wrapper").GetComponent<PlayerController>();
         TurnManager turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
-        GameObject item = Instantiate(gameObject, new Vector3(playerController.playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerController.playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1), Quaternion.identity);
+        GameObject item = Instantiate(gameObject, new Vector3(playerController.playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerController.playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1), gameObject.transform.rotation);
         turnManager.objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].Add(item);
         if (uiManager.items.Count != 0 && menuManager.itemIndex == uiManager.items.Count)
         {
@@ -62,7 +65,7 @@ public class Item : MonoBehaviour
         menuManager.RerenderItems();
         PlayerController playerController = GameObject.Find("Player Wrapper").GetComponent<PlayerController>();
         TurnManager turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
-        GameObject item = Instantiate(gameObject, new Vector3(playerController.playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerController.playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1), Quaternion.identity);
+        GameObject item = Instantiate(gameObject, new Vector3(playerController.playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerController.playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1), gameObject.transform.rotation);
         turnManager.objectInfo[playerController.playerPosition[0], playerController.playerPosition[1]].Add(item);
         if (uiManager.items.Count != 0 && menuManager.itemIndex == uiManager.items.Count)
         {
@@ -74,7 +77,7 @@ public class Item : MonoBehaviour
         turnManager.ProcessTurn();
     }
 
-    public virtual void Equip(GameObject menu, int index, float direction)
+    public virtual void Equip(GameObject menu, int index)
     {
 
     }
@@ -85,6 +88,17 @@ public class Item : MonoBehaviour
         {
             objectGotHit.GetComponent<EnemyController>().DecreaceHP(5);
             Destroy(gameObject);
+        }
+    }
+
+    public virtual string GetEquipTranslation(Language lang)
+    {
+        switch (lang)
+        {
+            case Language.Ja:
+                return "装備";
+            default:
+                return "";
         }
     }
 

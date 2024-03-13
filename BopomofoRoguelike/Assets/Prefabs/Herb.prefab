@@ -64,6 +64,10 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 9088725651010873648, guid: cc3a9638227ea46879904ad6ff87f231, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 3655491078488445676, guid: cc3a9638227ea46879904ad6ff87f231, type: 3}
     m_RemovedGameObjects: []
@@ -90,6 +94,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9674174d4845c45b1bb89805b7e33ed7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  isThrown: 0
-  isFlying: 0
-  playerDirection: 0

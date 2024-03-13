@@ -44,7 +44,7 @@ public class CommandPanelManager : MonoBehaviour
             else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Put, Language.Ja))
             {
                 item.GetComponent<Item>().Put(menu, (int)itemIndex);
-                StartCoroutine(WaitOneFrame());
+                isFocused = false;
             }
             else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Throw, Language.Ja))
             {
@@ -56,7 +56,8 @@ public class CommandPanelManager : MonoBehaviour
             }
             else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Equip, Language.Ja))
             {
-                Debug.Log("Do something");
+                item.GetComponent<Item>().Equip(menu, (int)itemIndex);
+                isFocused = false;
             }
             item = null;
             itemIndex = null;

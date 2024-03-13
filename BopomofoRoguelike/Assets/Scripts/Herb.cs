@@ -4,6 +4,12 @@ using UnityEngine;
 
 public class Herb : Item
 {
+
+    public override Commands[] GetCommands()
+    {
+        return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw };
+    }
+
     public override void Use(PlayerController player, GameObject menu, int index)
     {
         UIManager uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();

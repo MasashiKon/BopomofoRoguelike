@@ -117,7 +117,15 @@ public class MenuManager : MonoBehaviour
         for (int i = 0; i < items.Count; i++)
         {
             GameObject itemInstence = Instantiate(itemSlot, gameObject.transform.position, Quaternion.identity);
-            itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(items[i].GetComponent<Item>().GetNameTranslation(Language.Ja));
+            Item targetItem = items[i].GetComponent<Item>(); 
+            if (!targetItem.isEquiped)
+            {
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(targetItem.GetNameTranslation(Language.Ja));
+            }
+            else
+            {
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(targetItem.GetNameTranslation(Language.Ja) + " " + targetItem.GetEquipTranslation(Language.Ja));
+            }
             itemInstence.transform.SetParent(scrollPort.transform);
             RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
             rectTransform.anchoredPosition = new Vector2(0, 50 * -i);
