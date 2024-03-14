@@ -5,5 +5,6 @@ public enum Commands
     Dispose,
     Put,
     Throw,
-    Equip
+    Equip,
+    Off
 }

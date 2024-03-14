@@ -9,7 +9,7 @@ public class Item : MonoBehaviour
 
     public virtual Commands[] GetCommands()
     {
-        return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw, Commands.Equip };
+        return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw, Commands.Equip, Commands.Off };
     }
 
     public virtual void Use(PlayerController player, GameObject menu, int index)
@@ -82,6 +82,11 @@ public class Item : MonoBehaviour
 
     }
 
+    public virtual void Off(GameObject menu, int index)
+    {
+
+    }
+
     public virtual void Collision(GameObject objectGotHit)
     {
         if (objectGotHit.CompareTag("Enemy"))
@@ -130,6 +135,8 @@ public class Item : MonoBehaviour
                     return "投げる";
                 case Commands.Equip:
                     return "装備";
+                case Commands.Off:
+                    return "外す";
             }
         }
         return "";

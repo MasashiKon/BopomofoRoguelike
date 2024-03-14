@@ -8,7 +8,7 @@ public class Sword : Item
 
     public override Commands[] GetCommands()
     {
-        return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw, Commands.Equip };
+        return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw, Commands.Equip, Commands.Off };
     }
 
     public override void Use(PlayerController player, GameObject menu, int index)
@@ -27,6 +27,23 @@ public class Sword : Item
         copiedItem.transform.localPosition = new Vector3(copiedItem.transform.localPosition.x + 0.4f, copiedItem.transform.localPosition.y, copiedItem.transform.localPosition.z);
         uiManager.isPaused = false;
         GameObject.FindWithTag("Player").GetComponent<PlayerController>().sword = gameObject.GetComponent<Sword>();
+        menu.SetActive(false);
+    }
+
+    public override void Off(GameObject menu, int index)
+    {
+        isEquiped = false;
+        UIManager uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        GameObject player = GameObject.Find("Player");
+        for (int i = 0; i < player.transform.childCount; i++)
+        {
+            if (player.transform.GetChild(i).GetComponent<Sword>())
+            {
+                Destroy(player.transform.GetChild(i).gameObject);
+            }
+        }
+        uiManager.isPaused = false;
+        GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = null;
         menu.SetActive(false);
     }
 

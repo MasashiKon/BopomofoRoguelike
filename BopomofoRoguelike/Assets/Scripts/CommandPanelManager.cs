@@ -59,6 +59,11 @@ public class CommandPanelManager : MonoBehaviour
                 item.GetComponent<Item>().Equip(menu, (int)itemIndex);
                 isFocused = false;
             }
+            else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Off, Language.Ja))
+            {
+                item.GetComponent<Item>().Off(menu, (int)itemIndex);
+                isFocused = false;
+            }
             item = null;
             itemIndex = null;
             commandIndex = 0;
@@ -116,6 +121,10 @@ public class CommandPanelManager : MonoBehaviour
             else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Equip)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Equip, Language.Ja));
+            }
+            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Off)
+            {
+                itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Off, Language.Ja));
             }
             itemInstence.transform.SetParent(transform);
             RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
