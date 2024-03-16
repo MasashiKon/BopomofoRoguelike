@@ -102,36 +102,46 @@ public class CommandPanelManager : MonoBehaviour
         for (int i = 0; i < item.GetComponent<Item>().GetCommands().Length; i++)
         {
             GameObject itemInstence = Instantiate(commandSlot, transform.position, Quaternion.identity);
+            void RenderCommand()
+            {
+                itemInstence.transform.SetParent(transform);
+                RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
+                rectTransform.offsetMax = new Vector2(0, commandSlots.Count * -50);
+                rectTransform.offsetMin = new Vector2(0, commandSlots.Count * -50);
+                rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 50);
+                commandSlots.Add(itemInstence);
+            }
+
             if (item.GetComponent<Item>().GetCommands()[i] == Commands.Use)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Use, Language.Ja));
+                RenderCommand();
             }
             else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Dispose)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Dispose, Language.Ja));
+                RenderCommand();
             }
             else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Put)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Put, Language.Ja));
+                RenderCommand();
             }
             else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Throw)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Throw, Language.Ja));
+                RenderCommand();
             }
-            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Equip)
+            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Equip && !item.GetComponent<Item>().isEquiped)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Equip, Language.Ja));
+                RenderCommand();
             }
-            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Off)
+            else if (item.GetComponent<Item>().GetCommands()[i] == Commands.Off && item.GetComponent<Item>().isEquiped)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(Item.GetCommandTranslation(Commands.Off, Language.Ja));
+                RenderCommand();
             }
-            itemInstence.transform.SetParent(transform);
-            RectTransform rectTransform = itemInstence.GetComponent<RectTransform>();
-            rectTransform.offsetMax = new Vector2(0, i * -50);
-            rectTransform.offsetMin = new Vector2(0, i * -50);
-            rectTransform.sizeDelta = new Vector2(rectTransform.sizeDelta.x, 50);
-            commandSlots.Add(itemInstence);
         }
         commandSlots[0].GetComponent<CommandSlotManager>().MouseOver();
         commandIndex = 0;

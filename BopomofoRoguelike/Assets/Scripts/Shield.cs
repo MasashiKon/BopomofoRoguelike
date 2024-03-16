@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class Shield : Item
@@ -28,7 +29,11 @@ public class Shield : Item
         copiedItem.transform.localPosition = new Vector3(copiedItem.transform.localPosition.x - 0.2f, copiedItem.transform.localPosition.y + 0.4f, copiedItem.transform.localPosition.z);
         uiManager.isPaused = false;
         GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = gameObject.GetComponent<Shield>();
+        PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        playerController.shield = gameObject.GetComponent<Shield>();
+        playerController.isPlayerUseItem = true;
         menu.SetActive(false);
+        StartCoroutine(RenderTextAndProcessTurn(GetNameTranslation(Language.Ja) + "を装備した"));
     }
 
     public override void Off(GameObject menu, int index)
@@ -44,8 +49,11 @@ public class Shield : Item
             }
         }
         uiManager.isPaused = false;
-        GameObject.FindWithTag("Player").GetComponent<PlayerController>().sword = gameObject.GetComponent<Sword>();
+        PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        playerController.shield = null;
+        playerController.isPlayerUseItem = true;
         menu.SetActive(false);
+        StartCoroutine(RenderTextAndProcessTurn(GetNameTranslation(Language.Ja) + "を外した"));
     }
 
     public override void Collision(GameObject objectGotHit)
@@ -71,5 +79,17 @@ public class Shield : Item
     public int GetSwordDefence()
     {
         return defence;
+    }
+
+    IEnumerator RenderTextAndProcessTurn(string text)
+    {
+        TextMeshProUGUI textMessage = GameObject.Find("Message").GetComponent<TextMeshProUGUI>();
+        textMessage.SetText(text);
+
+        yield return new WaitForSeconds(0.5f);
+
+        textMessage.SetText("");
+
+        GameObject.Find("Turn Manager").GetComponent<TurnManager>().ProcessTurn();
     }
 }
