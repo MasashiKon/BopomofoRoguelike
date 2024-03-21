@@ -155,9 +155,9 @@ public class DungeonGenerator : MonoBehaviour
 
     }
 
-    private void DivideArea(int startX, int startY, int endX, int endY)
+    private int[] DivideArea(int startX, int startY, int endX, int endY)
     {
-        if ((endX - startX < 8 && endY - startY < 16) || (endX - startX < 16 && endY - startY < 8))
+        int[] CreateBox()
         {
             int box1pointX1;
             int box1pointX2;
@@ -186,6 +186,7 @@ public class DungeonGenerator : MonoBehaviour
                             field[i, j] = 1;
                         }
                     }
+                    return new int[] { box1pointX1, box1pointY1, box1pointX2, box1pointY2 };
                 }
                 else
                 {
@@ -196,6 +197,7 @@ public class DungeonGenerator : MonoBehaviour
                             field[i, j] = 1;
                         }
                     }
+                    return new int[] { box1pointX2, box1pointY1, box1pointX1, box1pointY2 };
                 }
             }
             else
@@ -209,6 +211,7 @@ public class DungeonGenerator : MonoBehaviour
                             field[i, j] = 1;
                         }
                     }
+                    return new int[] { box1pointX1, box1pointY2, box1pointX2, box1pointY1 };
                 }
                 else
                 {
@@ -219,10 +222,14 @@ public class DungeonGenerator : MonoBehaviour
                             field[i, j] = 1;
                         }
                     }
+                    return new int[] { box1pointX2, box1pointY2, box1pointX1, box1pointY1 };
                 }
             }
+        }
 
-            return;
+        if ((endX - startX < 8 && endY - startY < 16) || (endX - startX < 16 && endY - startY < 8))
+        {
+            return CreateBox();
         }
 
         if (endX - startX < 16 && endY - startY >= 16)
@@ -231,73 +238,50 @@ public class DungeonGenerator : MonoBehaviour
 
             if (divisionLine - startY < 8 || endY - divisionLine < 8)
             {
-                int box1pointX1;
-                int box1pointX2;
-                do
-                {
-                    box1pointX1 = Random.Range(startX + 1, endX - 1);
-                    box1pointX2 = Random.Range(startX + 1, endX - 1);
-                } while (box1pointX1 == box1pointX2);
-
-                int box1pointY1;
-                int box1pointY2;
-                do
-                {
-                    box1pointY1 = Random.Range(startY + 1, endY - 1);
-                    box1pointY2 = Random.Range(startY + 1, endY - 1);
-                } while (box1pointY1 == box1pointY2);
-
-                if (box1pointY2 - box1pointY1 > 0)
-                {
-                    if (box1pointX2 - box1pointX1 > 0)
-                    {
-                        for (int i = box1pointY1; i <= box1pointY2; i++)
-                        {
-                            for (int j = box1pointX1; j <= box1pointX2; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int i = box1pointY1; i <= box1pointY2; i++)
-                        {
-                            for (int j = box1pointX2; j <= box1pointX1; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (box1pointX2 - box1pointX1 > 0)
-                    {
-                        for (int i = box1pointY2; i <= box1pointY1; i++)
-                        {
-                            for (int j = box1pointX1; j <= box1pointX2; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int i = box1pointY2; i <= box1pointY1; i++)
-                        {
-                            for (int j = box1pointX2; j <= box1pointX1; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                }
+                return CreateBox();
             }
             else
             {
-                DivideArea(startX, startY, endX, divisionLine - 1);
-                DivideArea(startX, divisionLine, endX, endY);
+                int[] box1 = DivideArea(startX, startY, endX, divisionLine - 1);
+                int[] box2 = DivideArea(startX, divisionLine + 1, endX, endY);
+
+                int minX = box2[0] - box1[0] > 0 ? box1[0] : box2[0];
+                int maxX = box2[2] - box1[2] > 0 ? box2[2] : box1[2];
+
+                int alleyPoint1 = Random.Range(box1[0], box1[2]);
+                int box1Int = divisionLine - 1;
+
+                while (field[box1Int, alleyPoint1] == 0)
+                {
+                    field[box1Int, alleyPoint1] = 1;
+                    box1Int--;
+                }
+
+                int alleyPoint2 = Random.Range(box2[0], box2[2]);
+                int box2Int = divisionLine;
+
+                while (field[box2Int, alleyPoint2] == 0)
+                {
+                    field[box2Int, alleyPoint2] = 1;
+                    box2Int++;
+                }
+
+                if (alleyPoint2 - alleyPoint1 > 0)
+                {
+                    for (int i = alleyPoint1; i <= alleyPoint2; i++)
+                    {
+                        field[divisionLine, i] = 1;
+                    }
+                }
+                else if (alleyPoint2 - alleyPoint1 < 0)
+                {
+                    for (int i = alleyPoint2; i <= alleyPoint1; i++)
+                    {
+                        field[divisionLine, i] = 1;
+                    }
+                }
+
+                return new int[] { minX, box1[1], maxX, box2[3] };
             }
         }
         else if (endX - startX >= 16 && endY - startY < 16)
@@ -306,73 +290,51 @@ public class DungeonGenerator : MonoBehaviour
 
             if (divisionLine - startX < 8 || endX - divisionLine < 8)
             {
-                int box1pointX1;
-                int box1pointX2;
-                do
-                {
-                    box1pointX1 = Random.Range(startX + 1, endX - 1);
-                    box1pointX2 = Random.Range(startX + 1, endX - 1);
-                } while (box1pointX1 == box1pointX2);
-
-                int box1pointY1;
-                int box1pointY2;
-                do
-                {
-                    box1pointY1 = Random.Range(startY + 1, endY - 1);
-                    box1pointY2 = Random.Range(startY + 1, endY - 1);
-                } while (box1pointY1 == box1pointY2);
-
-                if (box1pointY2 - box1pointY1 > 0)
-                {
-                    if (box1pointX2 - box1pointX1 > 0)
-                    {
-                        for (int i = box1pointY1; i <= box1pointY2; i++)
-                        {
-                            for (int j = box1pointX1; j <= box1pointX2; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int i = box1pointY1; i <= box1pointY2; i++)
-                        {
-                            for (int j = box1pointX2; j <= box1pointX1; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    if (box1pointX2 - box1pointX1 > 0)
-                    {
-                        for (int i = box1pointY2; i <= box1pointY1; i++)
-                        {
-                            for (int j = box1pointX1; j <= box1pointX2; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        for (int i = box1pointY2; i <= box1pointY1; i++)
-                        {
-                            for (int j = box1pointX2; j <= box1pointX1; j++)
-                            {
-                                field[i, j] = 1;
-                            }
-                        }
-                    }
-                }
+                return CreateBox();
             }
             else
             {
-                DivideArea(startX, startY, divisionLine - 1, endY);
-                DivideArea(divisionLine, startY, endX, endY);
+                int[] box1 = DivideArea(startX, startY, divisionLine - 1, endY);
+                int[] box2 = DivideArea(divisionLine + 1, startY, endX, endY);
+
+                int minY = box2[1] - box1[1] > 0 ? box1[1] : box2[1];
+                int maxY = box2[3] - box1[3] > 0 ? box2[3] : box1[3];
+
+                int alleyPoint1 = Random.Range(box1[1], box1[3]);
+                int box1Int = divisionLine - 1;
+
+                while (field[alleyPoint1, box1Int] == 0)
+                {
+                    field[alleyPoint1, box1Int] = 1;
+                    box1Int--;
+                }
+
+                int alleyPoint2 = Random.Range(box2[1], box2[3]);
+                int box2Int = divisionLine;
+
+                while (field[alleyPoint2, box2Int] == 0)
+                {
+                    field[alleyPoint2, box2Int] = 1;
+                    box2Int++;
+                }
+
+                if (alleyPoint2 - alleyPoint1 > 0)
+                {
+                    for (int i = alleyPoint1; i <= alleyPoint2; i++)
+                    {
+                        field[i, divisionLine] = 1;
+                    }
+                }
+                else if (alleyPoint2 - alleyPoint1 < 0)
+                {
+                    for (int i = alleyPoint2; i <= alleyPoint1; i++)
+                    {
+                        field[i, divisionLine] = 1;
+                    }
+                }
+
+
+                return new int[] { box1[0], minY, box2[2], maxY };
             }
         }
         else
@@ -384,412 +346,102 @@ public class DungeonGenerator : MonoBehaviour
                 int divisionLine = Random.Range((endY - startY) / 2 + startY - 2, (endY - startY) / 2 + startY + 3);
                 if (divisionLine - startY < 8 || endY - divisionLine < 8)
                 {
-                    int box1pointX1;
-                    int box1pointX2;
-                    do
-                    {
-                        box1pointX1 = Random.Range(startX + 1, endX - 1);
-                        box1pointX2 = Random.Range(startX + 1, endX - 1);
-                    } while (box1pointX1 == box1pointX2);
-
-                    int box1pointY1;
-                    int box1pointY2;
-                    do
-                    {
-                        box1pointY1 = Random.Range(startY + 1, endY - 1);
-                        box1pointY2 = Random.Range(startY + 1, endY - 1);
-                    } while (box1pointY1 == box1pointY2);
-
-                    if (box1pointY2 - box1pointY1 > 0)
-                    {
-                        if (box1pointX2 - box1pointX1 > 0)
-                        {
-                            for (int i = box1pointY1; i <= box1pointY2; i++)
-                            {
-                                for (int j = box1pointX1; j <= box1pointX2; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (int i = box1pointY1; i <= box1pointY2; i++)
-                            {
-                                for (int j = box1pointX2; j <= box1pointX1; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (box1pointX2 - box1pointX1 > 0)
-                        {
-                            for (int i = box1pointY2; i <= box1pointY1; i++)
-                            {
-                                for (int j = box1pointX1; j <= box1pointX2; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (int i = box1pointY2; i <= box1pointY1; i++)
-                            {
-                                for (int j = box1pointX2; j <= box1pointX1; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                    }
+                    return CreateBox();
                 }
                 else
                 {
-                    DivideArea(startX, startY, endX, divisionLine - 1);
-                    DivideArea(startX, divisionLine, endX, endY);
+                    int[] box1 = DivideArea(startX, startY, endX, divisionLine - 1);
+                    int[] box2 = DivideArea(startX, divisionLine + 1, endX, endY);
+
+                    int minX = box2[0] - box1[0] > 0 ? box1[0] : box2[0];
+                    int maxX = box2[2] - box1[2] > 0 ? box2[2] : box1[2];
+
+                    int alleyPoint1 = Random.Range(box1[0], box1[2]);
+                    int box1Int = divisionLine - 1;
+
+                    while (field[box1Int, alleyPoint1] == 0)
+                    {
+                        field[box1Int, alleyPoint1] = 1;
+                        box1Int--;
+                    }
+
+                    int alleyPoint2 = Random.Range(box2[0], box2[2]);
+                    int box2Int = divisionLine;
+
+                    while (field[box2Int, alleyPoint2] == 0)
+                    {
+                        field[box2Int, alleyPoint2] = 1;
+                        box2Int++;
+                    }
+
+                    if (alleyPoint2 - alleyPoint1 > 0)
+                    {
+                        for (int i = alleyPoint1; i <= alleyPoint2; i++)
+                        {
+                            field[divisionLine, i] = 1;
+                        }
+                    }
+                    else if (alleyPoint2 - alleyPoint1 < 0)
+                    {
+                        for (int i = alleyPoint2; i <= alleyPoint1; i++)
+                        {
+                            field[divisionLine, i] = 1;
+                        }
+                    }
+
+                    return new int[] { minX, box1[1], maxX, box2[3] };
                 }
-
-                //// box1
-                //int box1pointX1;
-                //int box1pointX2;
-
-                //do
-                //{
-                //    box1pointX1 = Random.Range(startX + 1, endX - 1);
-                //    box1pointX2 = Random.Range(startX + 1, endX - 1);
-                //} while (box1pointX1 == box1pointX2);
-
-                //int box1pointY1;
-                //int box1pointY2;
-
-                //do
-                //{
-                //    box1pointY1 = Random.Range(startY + 1, divisionLine - 2);
-                //    box1pointY2 = Random.Range(startY + 1, divisionLine - 2);
-                //} while (box1pointY1 == box1pointY2);
-
-                //if (box1pointY2 - box1pointY1 > 0)
-                //{
-                //    if (box1pointX2 - box1pointX1 > 0)
-                //    {
-                //        for (int i = box1pointY1; i <= box1pointY2; i++)
-                //        {
-                //            for (int j = box1pointX1; j <= box1pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box1pointY1; i <= box1pointY2; i++)
-                //        {
-                //            for (int j = box1pointX2; j <= box1pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    if (box1pointX2 - box1pointX1 > 0)
-                //    {
-                //        for (int i = box1pointY2; i <= box1pointY1; i++)
-                //        {
-                //            for (int j = box1pointX1; j <= box1pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box1pointY2; i <= box1pointY1; i++)
-                //        {
-                //            for (int j = box1pointX2; j <= box1pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
-
-                //// box2
-                //int box2pointX1;
-                //int box2pointX2;
-
-                //do
-                //{
-                //    box2pointX1 = Random.Range(startX + 1, endX - 1);
-                //    box2pointX2 = Random.Range(startX + 1, endX - 1);
-                //} while (box2pointX1 == box2pointX2);
-
-                //int box2pointY1;
-                //int box2pointY2;
-
-                //do
-                //{
-                //    box2pointY1 = Random.Range(divisionLine + 1, endY - 1);
-                //    box2pointY2 = Random.Range(divisionLine + 1, endY - 1);
-                //} while (box2pointY1 == box2pointY2);
-
-                //if (box2pointY2 - box2pointY1 > 0)
-                //{
-                //    if (box2pointX2 - box2pointX1 > 0)
-                //    {
-                //        for (int i = box2pointY1; i <= box2pointY2; i++)
-                //        {
-                //            for (int j = box2pointX1; j <= box2pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box2pointY1; i <= box2pointY2; i++)
-                //        {
-                //            for (int j = box2pointX2; j <= box2pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    if (box2pointX2 - box2pointX1 > 0)
-                //    {
-                //        for (int i = box2pointY2; i <= box2pointY1; i++)
-                //        {
-                //            for (int j = box2pointX1; j <= box2pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box2pointY2; i <= box2pointY1; i++)
-                //        {
-                //            for (int j = box2pointX2; j <= box2pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
             }
             else
             {
                 int divisionLine = Random.Range((endX - startX) / 2 + startX - 2, (endX - startX) / 2 + startX + 3);
                 if (divisionLine - startX < 8 || endX - divisionLine < 8)
                 {
-                    int box1pointX1;
-                    int box1pointX2;
-                    do
-                    {
-                        box1pointX1 = Random.Range(startX + 1, endX - 1);
-                        box1pointX2 = Random.Range(startX + 1, endX - 1);
-                    } while (box1pointX1 == box1pointX2);
-
-                    int box1pointY1;
-                    int box1pointY2;
-                    do
-                    {
-                        box1pointY1 = Random.Range(startY + 1, endY - 1);
-                        box1pointY2 = Random.Range(startY + 1, endY - 1);
-                    } while (box1pointY1 == box1pointY2);
-
-                    if (box1pointY2 - box1pointY1 > 0)
-                    {
-                        if (box1pointX2 - box1pointX1 > 0)
-                        {
-                            for (int i = box1pointY1; i <= box1pointY2; i++)
-                            {
-                                for (int j = box1pointX1; j <= box1pointX2; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (int i = box1pointY1; i <= box1pointY2; i++)
-                            {
-                                for (int j = box1pointX2; j <= box1pointX1; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        if (box1pointX2 - box1pointX1 > 0)
-                        {
-                            for (int i = box1pointY2; i <= box1pointY1; i++)
-                            {
-                                for (int j = box1pointX1; j <= box1pointX2; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            for (int i = box1pointY2; i <= box1pointY1; i++)
-                            {
-                                for (int j = box1pointX2; j <= box1pointX1; j++)
-                                {
-                                    field[i, j] = 1;
-                                }
-                            }
-                        }
-                    }
+                    return CreateBox();
                 }
                 else
                 {
-                    DivideArea(startX, startY, divisionLine - 1, endY);
-                    DivideArea(divisionLine, startY, endX, endY);
+                    int[] box1 = DivideArea(startX, startY, divisionLine - 1, endY);
+                    int[] box2 = DivideArea(divisionLine + 1, startY, endX, endY);
+
+                    int minY = box2[1] - box1[1] > 0 ? box1[1] : box2[1];
+                    int maxY = box2[3] - box1[3] > 0 ? box2[3] : box1[3];
+
+                    int alleyPoint1 = Random.Range(box1[1], box1[3]);
+                    int box1Int = divisionLine - 1;
+
+                    while (field[alleyPoint1, box1Int] == 0)
+                    {
+                        field[alleyPoint1, box1Int] = 1;
+                        box1Int--;
+                    }
+
+                    int alleyPoint2 = Random.Range(box2[1], box2[3]);
+                    int box2Int = divisionLine;
+
+                    while (field[alleyPoint2, box2Int] == 0)
+                    {
+                        field[alleyPoint2, box2Int] = 1;
+                        box2Int++;
+                    }
+
+                    if (alleyPoint2 - alleyPoint1 > 0)
+                    {
+                        for (int i = alleyPoint1; i <= alleyPoint2; i++)
+                        {
+                            field[i, divisionLine] = 1;
+                        }
+                    }
+                    else if (alleyPoint2 - alleyPoint1 < 0)
+                    {
+                        for (int i = alleyPoint2; i <= alleyPoint1; i++)
+                        {
+                            field[i, divisionLine] = 1;
+                        }
+                    }
+
+                    return new int[] { box1[0], minY, box2[2], maxY };
                 }
-
-                //// box1
-                //int box1pointX1;
-                //int box1pointX2;
-
-                //do
-                //{
-                //    box1pointX1 = Random.Range(startX + 1, divisionLine - 2);
-                //    box1pointX2 = Random.Range(startX + 1, divisionLine - 2);
-                //} while (box1pointX1 == box1pointX2);
-
-                //int box1pointY1;
-                //int box1pointY2;
-
-                //do
-                //{
-                //    box1pointY1 = Random.Range(startY + 1, endY - 1);
-                //    box1pointY2 = Random.Range(startY + 1, endY - 1);
-                //} while (box1pointY1 == box1pointY2);
-
-                //if (box1pointY2 - box1pointY1 > 0)
-                //{
-                //    if (box1pointX2 - box1pointX1 > 0)
-                //    {
-                //        for (int i = box1pointY1; i <= box1pointY2; i++)
-                //        {
-                //            for (int j = box1pointX1; j <= box1pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box1pointY1; i <= box1pointY2; i++)
-                //        {
-                //            for (int j = box1pointX2; j <= box1pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    if (box1pointX2 - box1pointX1 > 0)
-                //    {
-                //        for (int i = box1pointY2; i <= box1pointY1; i++)
-                //        {
-                //            for (int j = box1pointX1; j <= box1pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box1pointY2; i <= box1pointY1; i++)
-                //        {
-                //            for (int j = box1pointX2; j <= box1pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
-
-                //// box2
-                //int box2pointX1;
-                //int box2pointX2;
-
-                //do
-                //{
-                //    box2pointX1 = Random.Range(divisionLine + 1, endX - 1);
-                //    box2pointX2 = Random.Range(divisionLine + 1, endX - 1);
-                //} while (box2pointX1 == box2pointX2);
-
-                //int box2pointY1;
-                //int box2pointY2;
-
-                //do
-                //{
-                //    box2pointY1 = Random.Range(startY + 1, endY - 1);
-                //    box2pointY2 = Random.Range(startY + 1, endY - 1);
-                //} while (box2pointY1 == box2pointY2);
-
-                //if (box2pointY2 - box2pointY1 > 0)
-                //{
-                //    if (box2pointX2 - box2pointX1 > 0)
-                //    {
-                //        for (int i = box2pointY1; i <= box2pointY2; i++)
-                //        {
-                //            for (int j = box2pointX1; j <= box2pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box2pointY1; i <= box2pointY2; i++)
-                //        {
-                //            for (int j = box2pointX2; j <= box2pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
-                //else
-                //{
-                //    if (box2pointX2 - box2pointX1 > 0)
-                //    {
-                //        for (int i = box2pointY2; i <= box2pointY1; i++)
-                //        {
-                //            for (int j = box2pointX1; j <= box2pointX2; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //    else
-                //    {
-                //        for (int i = box2pointY2; i <= box2pointY1; i++)
-                //        {
-                //            for (int j = box2pointX2; j <= box2pointX1; j++)
-                //            {
-                //                field[i, j] = 1;
-                //            }
-                //        }
-                //    }
-                //}
             }
         }
     }
