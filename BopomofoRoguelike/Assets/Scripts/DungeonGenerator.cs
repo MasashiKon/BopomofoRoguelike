@@ -13,11 +13,11 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject player;
     public GameObject enemy;
     public int[,] field = new int[dungeonSize, dungeonSize];
+    public List<int[]> availableCell = new List<int[]>();
 
     private TurnManager turnManager;
     private PrefabManager prefabManager;
     private List<int[]> route = new List<int[]>();
-    private List<int[]> availableCell = new List<int[]>();
 
     // Start is called before the first frame update
     void Start()
@@ -125,28 +125,48 @@ public class DungeonGenerator : MonoBehaviour
             }
         }
 
-        //for (int i = 0; i < 150; i++)
-        //{
-        //    int randomIndex = Random.Range(0, availableCell.Count());
-        //    int randomItemIndex = Random.Range(0, prefabManager.items.Length);
-        //    GameObject itemInstance = Instantiate(prefabManager.items[randomItemIndex], new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), prefabManager.items[randomItemIndex].transform.rotation);
-        //    itemInstance.GetComponent<ItemController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
-        //    turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]].Add(itemInstance);
-        //}
+        for (int i = 0; i < 15; i++)
+        {
+            int randomIndex = Random.Range(0, availableCell.Count());
+            GameObject enemyInstance = Instantiate(enemy, new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity);
+            enemyInstance.transform.GetChild(0).GetComponent<SpriteRenderer>().material.color = new Color(Random.Range(0, 256) / 255f, Random.Range(0, 256) / 255f, Random.Range(0, 256 / 255f), Random.Range(0, 156 / 155f) + 100);
+            enemyInstance.GetComponent<EnemyController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
+            turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]].Add(enemyInstance);
+            availableCell.RemoveAt(randomIndex);
+        }
 
-        //for (int i = 0; i < 50; i++)
-        //{
-        //    int randomIndex = Random.Range(0, availableCell.Count());
-        //    GameObject enemyInstance = Instantiate(enemy, new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), Quaternion.identity);
-        //    enemyInstance.transform.GetChild(0).GetComponent<SpriteRenderer>().material.color = new Color(Random.Range(0, 256) / 255f, Random.Range(0, 256) / 255f, Random.Range(0, 256 / 255f), Random.Range(0, 156 / 155f) + 100);
-        //    enemyInstance.GetComponent<EnemyController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
-        //    turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]].Add(enemyInstance);
+        int indexToDelete = 0;
 
+        while (indexToDelete < availableCell.Count)
+        {
+            if (field[availableCell[indexToDelete][0], availableCell[indexToDelete][1]] != 2)
+            {
+                availableCell.RemoveAt(indexToDelete);
+            }
+            else
+            {
+                indexToDelete++;
+            }
+        }
 
-        //    availableCell.RemoveAt(randomIndex);
-        //}
+        for (int i = 0; i < 15; i++)
+        {
+            int randomIndex = Random.Range(0, availableCell.Count());
+            if (field[availableCell[randomIndex][0], availableCell[randomIndex][1]] == 2)
+            {
+                int randomItemIndex = Random.Range(0, prefabManager.items.Length);
+                GameObject itemInstance = Instantiate(prefabManager.items[randomItemIndex], new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), prefabManager.items[randomItemIndex].transform.rotation);
+                itemInstance.GetComponent<ItemController>().pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
+                turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]].Add(itemInstance);
+                availableCell.RemoveAt(randomIndex);
+            }
+            else
+            {
+                availableCell.RemoveAt(randomIndex);
+            }
+        }
 
-        //player.SetActive(true);
+        player.SetActive(true);
     }
 
     // Update is called once per frame
@@ -184,6 +204,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int j = box1pointX1; j <= box1pointX2; j++)
                         {
                             field[i, j] = 2;
+                            availableCell.Add(new int[] { i, j });
                         }
                     }
                     return new int[] { box1pointX1, box1pointY1, box1pointX2, box1pointY2 };
@@ -195,6 +216,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int j = box1pointX2; j <= box1pointX1; j++)
                         {
                             field[i, j] = 2;
+                            availableCell.Add(new int[] { i, j });
                         }
                     }
                     return new int[] { box1pointX2, box1pointY1, box1pointX1, box1pointY2 };
@@ -209,6 +231,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int j = box1pointX1; j <= box1pointX2; j++)
                         {
                             field[i, j] = 2;
+                            availableCell.Add(new int[] { i, j });
                         }
                     }
                     return new int[] { box1pointX1, box1pointY2, box1pointX2, box1pointY1 };
@@ -220,6 +243,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int j = box1pointX2; j <= box1pointX1; j++)
                         {
                             field[i, j] = 2;
+                            availableCell.Add(new int[] { i, j });
                         }
                     }
                     return new int[] { box1pointX2, box1pointY2, box1pointX1, box1pointY1 };
@@ -286,6 +310,7 @@ public class DungeonGenerator : MonoBehaviour
                         while (field[box1Int, alleyPoint1] == 0)
                         {
                             field[box1Int, alleyPoint1] = 1;
+                            availableCell.Add(new int[] { box1Int, alleyPoint1 });
                             box1Int--;
                         }
 
@@ -315,6 +340,7 @@ public class DungeonGenerator : MonoBehaviour
                         while (field[box2Int, alleyPoint2] == 0)
                         {
                             field[box2Int, alleyPoint2] = 1;
+                            availableCell.Add(new int[] { box2Int, alleyPoint2 });
                             box2Int++;
                         }
 
@@ -323,6 +349,7 @@ public class DungeonGenerator : MonoBehaviour
                             for (int i = alleyPoint1; i <= alleyPoint2; i++)
                             {
                                 field[divisionLine, i] = 1;
+                                availableCell.Add(new int[] { divisionLine, i });
                             }
                         }
                         else if (alleyPoint2 - alleyPoint1 < 0)
@@ -330,6 +357,7 @@ public class DungeonGenerator : MonoBehaviour
                             for (int i = alleyPoint2; i <= alleyPoint1; i++)
                             {
                                 field[divisionLine, i] = 1;
+                                availableCell.Add(new int[] { divisionLine, i });
                             }
                         }
 
@@ -378,6 +406,7 @@ public class DungeonGenerator : MonoBehaviour
                         while (field[alleyPoint1, box1Int] == 0)
                         {
                             field[alleyPoint1, box1Int] = 1;
+                            availableCell.Add(new int[] { alleyPoint1, box1Int });
                             box1Int--;
                         }
 
@@ -407,6 +436,7 @@ public class DungeonGenerator : MonoBehaviour
                         while (field[alleyPoint2, box2Int] == 0)
                         {
                             field[alleyPoint2, box2Int] = 1;
+                            availableCell.Add(new int[] { alleyPoint2, box2Int });
                             box2Int++;
                         }
 
@@ -415,6 +445,7 @@ public class DungeonGenerator : MonoBehaviour
                             for (int i = alleyPoint1; i <= alleyPoint2; i++)
                             {
                                 field[i, divisionLine] = 1;
+                                availableCell.Add(new int[] { i, divisionLine });
                             }
                         }
                         else if (alleyPoint2 - alleyPoint1 < 0)
@@ -422,6 +453,7 @@ public class DungeonGenerator : MonoBehaviour
                             for (int i = alleyPoint2; i <= alleyPoint1; i++)
                             {
                                 field[i, divisionLine] = 1;
+                                availableCell.Add(new int[] { i, divisionLine });
                             }
                         }
 
@@ -478,6 +510,7 @@ public class DungeonGenerator : MonoBehaviour
                     while (field[box1Int, alleyPoint1] == 0)
                     {
                         field[box1Int, alleyPoint1] = 1;
+                        availableCell.Add(new int[] { box1Int, alleyPoint1 });
                         box1Int--;
                     }
 
@@ -507,6 +540,7 @@ public class DungeonGenerator : MonoBehaviour
                     while (field[box2Int, alleyPoint2] == 0)
                     {
                         field[box2Int, alleyPoint2] = 1;
+                        availableCell.Add(new int[] { box2Int, alleyPoint2 });
                         box2Int++;
                     }
 
@@ -515,6 +549,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int i = alleyPoint1; i <= alleyPoint2; i++)
                         {
                             field[divisionLine, i] = 1;
+                            availableCell.Add(new int[] { divisionLine, i });
                         }
                     }
                     else if (alleyPoint2 - alleyPoint1 < 0)
@@ -522,6 +557,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int i = alleyPoint2; i <= alleyPoint1; i++)
                         {
                             field[divisionLine, i] = 1;
+                            availableCell.Add(new int[] { divisionLine, i });
                         }
                     }
 
@@ -569,6 +605,7 @@ public class DungeonGenerator : MonoBehaviour
                     while (field[alleyPoint1, box1Int] == 0)
                     {
                         field[alleyPoint1, box1Int] = 1;
+                        availableCell.Add(new int[] { alleyPoint1, box1Int });
                         box1Int--;
                     }
 
@@ -598,6 +635,7 @@ public class DungeonGenerator : MonoBehaviour
                     while (field[alleyPoint2, box2Int] == 0)
                     {
                         field[alleyPoint2, box2Int] = 1;
+                        availableCell.Add(new int[] { alleyPoint2, box2Int });
                         box2Int++;
                     }
 
@@ -606,6 +644,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int i = alleyPoint1; i <= alleyPoint2; i++)
                         {
                             field[i, divisionLine] = 1;
+                            availableCell.Add(new int[] { i, divisionLine });
                         }
                     }
                     else if (alleyPoint2 - alleyPoint1 < 0)
@@ -613,6 +652,7 @@ public class DungeonGenerator : MonoBehaviour
                         for (int i = alleyPoint2; i <= alleyPoint1; i++)
                         {
                             field[i, divisionLine] = 1;
+                            availableCell.Add(new int[] { i, divisionLine });
                         }
                     }
 

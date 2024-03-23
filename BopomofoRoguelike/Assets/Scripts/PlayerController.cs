@@ -32,18 +32,10 @@ public class PlayerController : MonoBehaviour
         textMessage = GameObject.Find("Message").GetComponent<TextMeshProUGUI>();
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
         animator = transform.GetChild(0).GetComponent<Animator>();
-
         field = dungeonGenerator.field;
-        for (int i = 0; i < DungeonGenerator.dungeonSize; i++)
-        {
-            for (int j = 0; j < DungeonGenerator.dungeonSize; j++)
-            {
-                if (field[i, j] == 2)
-                {
-                    playerPosition = new int[] { i, j };
-                }
-            }
-        }
+
+        int playerIndex = Random.Range(0, dungeonGenerator.availableCell.Count);
+        playerPosition = dungeonGenerator.availableCell[playerIndex];
 
         turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
         gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
