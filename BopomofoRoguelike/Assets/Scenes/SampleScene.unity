@@ -1599,6 +1599,7 @@ MonoBehaviour:
   room: {fileID: 4906096959846375642, guid: 9ff0d2d83ec724e6ca5419ee3f01a167, type: 3}
   player: {fileID: 2080233508}
   enemy: {fileID: 8072242768054600945, guid: aef179ecdae6a4dad8142c259bc25e8a, type: 3}
+  stair: {fileID: 4356928729805576138, guid: 1d269a0b9d34343488d1a877daf3704e, type: 3}
 --- !u!1 &1538908071
 GameObject:
   m_ObjectHideFlags: 0
