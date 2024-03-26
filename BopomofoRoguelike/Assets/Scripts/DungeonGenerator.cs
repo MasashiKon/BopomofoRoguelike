@@ -12,6 +12,7 @@ public class DungeonGenerator : MonoBehaviour
     public GameObject room;
     public GameObject player;
     public GameObject enemy;
+    public GameObject stair;
     public int[,] field = new int[dungeonSize, dungeonSize];
     public List<int[]> availableCell = new List<int[]>();
 
@@ -146,6 +147,22 @@ public class DungeonGenerator : MonoBehaviour
             else
             {
                 indexToDelete++;
+            }
+        }
+
+        while (true)
+        {
+            int randomIndex = Random.Range(0, availableCell.Count());
+            if (field[availableCell[randomIndex][0], availableCell[randomIndex][1]] == 2 && field[availableCell[randomIndex][0] - 1, availableCell[randomIndex][1]] != 1 && field[availableCell[randomIndex][0], availableCell[randomIndex][1] + 1] != 1 && field[availableCell[randomIndex][0] + 1, availableCell[randomIndex][1]] != 1 && field[availableCell[randomIndex][0], availableCell[randomIndex][1] + 1] != 1)
+            {
+                GameObject stairInstance = Instantiate(stair, new Vector3(availableCell[randomIndex][1] - dungeonSize / 2, availableCell[randomIndex][0] * -1 + dungeonSize / 2, -1), stair.transform.rotation);
+                turnManager.objectInfo[availableCell[randomIndex][0], availableCell[randomIndex][1]].Add(stairInstance);
+                availableCell.RemoveAt(randomIndex);
+                break;
+            }
+            else if(field[availableCell[randomIndex][0], availableCell[randomIndex][1]] != 2)
+            {
+                availableCell.RemoveAt(randomIndex);
             }
         }
 
