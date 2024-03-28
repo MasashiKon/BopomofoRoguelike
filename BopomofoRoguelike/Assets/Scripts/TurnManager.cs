@@ -56,6 +56,7 @@ public class TurnManager : MonoBehaviour
         isReadyNextMove = false;
         PlayerController playerController = player.GetComponent<PlayerController>();
         TextMeshProUGUI textMessage = message.GetComponent<TextMeshProUGUI>();
+
         // Battle Phase
         if (playerController.isPlayerAttack)
         {
@@ -97,10 +98,6 @@ public class TurnManager : MonoBehaviour
             {
                 isPlayerMovePhase = false;
             }
-
-            isCameraMoving = true;
-            cameraCurrentPos = new Vector3(player.transform.position.x, player.transform.position.y - 1, -10);
-            StartCoroutine(MoveCamera());
         }
 
         // Enemy Move
@@ -213,28 +210,6 @@ public class TurnManager : MonoBehaviour
         }
         isAttackPhase = false;
     }
-
-    IEnumerator MoveCamera()
-    {
-        while (isCameraMoving)
-        {
-            float interpolationRatio = (float)cameraMoveElapsedFrames / cameraMoveInterpolationFramesCount;
-
-            Vector3 interpolatedPosition = Vector3.Lerp(cameraPrevPos, cameraCurrentPos, interpolationRatio);
-            mainCamera.transform.position = interpolatedPosition;
-
-            cameraMoveElapsedFrames = (cameraMoveElapsedFrames + 1) % (cameraMoveInterpolationFramesCount + 1);
-            if (cameraMoveElapsedFrames == 0)
-            {
-                isCameraMoving = false;
-                cameraPrevPos = cameraCurrentPos;
-            }
-
-            yield return null;
-        }
-
-    }
-
 
     IEnumerator DetectTurnEnd()
     {

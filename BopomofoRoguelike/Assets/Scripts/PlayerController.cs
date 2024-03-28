@@ -13,17 +13,25 @@ public class PlayerController : MonoBehaviour
     public int hp = 15;
     public Slider slider;
     public GameObject menuPanel;
+    public GameObject stairPanel;
     public int[] playerPosition;
     public int playerAttack = 3;
     public Sword sword;
     public int playerDefence = 0;
     public Shield shield;
+    public GameObject mainCamera;
+
     private TextMeshProUGUI textMessage;
     private DungeonGenerator dungeonGenerator;
     private int[,] field;
     private TurnManager turnManager;
     private UIManager uiManager;
     private Animator animator;
+    private bool isCameraMoving = false;
+    private Vector3 cameraPrevPos = new Vector3(0, 0, -10);
+    private Vector3 cameraCurrentPos = new Vector3(0, 0, -10);
+    private int cameraMoveInterpolationFramesCount = 40;
+    private int cameraMoveElapsedFrames = 0;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,7 +51,10 @@ public class PlayerController : MonoBehaviour
         slider.maxValue = hp;
         slider.value = hp;
 
-        turnManager.ProcessTurn();
+        isCameraMoving = true;
+        cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+        StartCoroutine(MoveCamera());
+        turnManager.isReadyNextMove = true;
     }
 
     // Update is called once per frame
@@ -72,7 +83,11 @@ public class PlayerController : MonoBehaviour
 
                 }
 
-                turnManager.ProcessTurn();
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
 
             }
             else if (Input.GetKey("down"))
@@ -96,7 +111,11 @@ public class PlayerController : MonoBehaviour
 
                 }
 
-                turnManager.ProcessTurn();
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
 
             }
             else if (Input.GetKey("left"))
@@ -120,7 +139,11 @@ public class PlayerController : MonoBehaviour
 
                 }
 
-                turnManager.ProcessTurn();
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
 
             }
             else if (Input.GetKey("right"))
@@ -143,7 +166,12 @@ public class PlayerController : MonoBehaviour
                     isPlayerMove = true;
 
                 }
-                turnManager.ProcessTurn();
+
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
 
             }
             else if (Input.GetKey("space"))
@@ -172,10 +200,43 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(WaitAndEraseText());
     }
 
+    public void NextFloorOrStay()
+    {
+        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]].Find(ob => ob.CompareTag("Stair")))
+        {
+            stairPanel.SetActive(true);
+        }
+        else
+        {
+            turnManager.ProcessTurn();
+        }
+    }
+
     IEnumerator WaitAndEraseText()
     {
         yield return new WaitForSeconds(0.5f);
         textMessage.SetText("");
+
+    }
+
+    IEnumerator MoveCamera()
+    {
+        while (isCameraMoving)
+        {
+            float interpolationRatio = (float)cameraMoveElapsedFrames / cameraMoveInterpolationFramesCount;
+
+            Vector3 interpolatedPosition = Vector3.Lerp(cameraPrevPos, cameraCurrentPos, interpolationRatio);
+            mainCamera.transform.position = interpolatedPosition;
+
+            cameraMoveElapsedFrames = (cameraMoveElapsedFrames + 1) % (cameraMoveInterpolationFramesCount + 1);
+            if (cameraMoveElapsedFrames == 0)
+            {
+                isCameraMoving = false;
+                cameraPrevPos = cameraCurrentPos;
+            }
+
+            yield return null;
+        }
 
     }
 }

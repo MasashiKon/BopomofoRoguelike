@@ -9,6 +9,7 @@ TagManager:
   - ItemSlot
   - CommandSlot
   - Item
+  - Stair
   layers:
   - Default
   - TransparentFX
