@@ -20,10 +20,10 @@ public class TurnManager : MonoBehaviour
 
     // Camera Move
     private bool isCameraMoving = false;
-    private Vector3 cameraPrevPos = new Vector3(0, 0, -10);
-    private Vector3 cameraCurrentPos = new Vector3(0, 0, -10);
-    private int cameraMoveInterpolationFramesCount = 60;
-    private int cameraMoveElapsedFrames = 0;
+    //private Vector3 cameraPrevPos = new Vector3(0, 0, -10);
+    //private Vector3 cameraCurrentPos = new Vector3(0, 0, -10);
+    //private int cameraMoveInterpolationFramesCount = 60;
+    //private int cameraMoveElapsedFrames = 0;
     private int enemyInt = 0;
     private UIManager uiManager;
     private PrefabManager prefabManager;

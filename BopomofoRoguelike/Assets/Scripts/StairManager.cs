@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class StairManager : MonoBehaviour
@@ -8,6 +9,7 @@ public class StairManager : MonoBehaviour
     private PlayerController playerController;
     private TurnManager turnManager;
     private int commandIndex = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -35,7 +37,7 @@ public class StairManager : MonoBehaviour
         {
             if (commandIndex == 0)
             {
-
+                SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             else if (commandIndex == 1)
             {

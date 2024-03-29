@@ -7,6 +7,7 @@ public class UIManager : MonoBehaviour
     public GameObject menuPanel;
     public List<GameObject> items = new List<GameObject>();
     public bool isPaused = false;
+
     // Start is called before the first frame update
     void Start()
     {
