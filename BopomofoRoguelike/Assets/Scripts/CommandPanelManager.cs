@@ -52,7 +52,6 @@ public class CommandPanelManager : MonoBehaviour
                 GameObject.Find("UI Manager").GetComponent<UIManager>().isPaused = false;
                 isFocused = false;
                 item.GetComponent<Item>().Throw(menu, (int)itemIndex, playerController.transform.rotation.eulerAngles.z);
-
             }
             else if (commandSlots[commandIndex].transform.GetChild(0).GetComponent<TextMeshProUGUI>().text == Item.GetCommandTranslation(Commands.Equip, Language.Ja))
             {

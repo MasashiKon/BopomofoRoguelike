@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class SceneReloader : MonoBehaviour
 {
-    public List<string> items = new List<string>();
+    public List<ItemParameter> items = new List<ItemParameter>();
+    public int? playerHP = null;
+    public int floor = 1;
     private static SceneReloader instance;
 
     private void Awake()

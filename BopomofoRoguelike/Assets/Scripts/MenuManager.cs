@@ -45,6 +45,7 @@ public class MenuManager : MonoBehaviour
 
         isFocused = true;
         firstActive = false;
+        RerenderItems();
     }
 
     // Update is called once per frame
@@ -117,7 +118,7 @@ public class MenuManager : MonoBehaviour
         for (int i = 0; i < items.Count; i++)
         {
             GameObject itemInstence = Instantiate(itemSlot, gameObject.transform.position, Quaternion.identity);
-            Item targetItem = items[i].GetComponent<Item>(); 
+            Item targetItem = items[i].GetComponent<Item>();
             if (!targetItem.isEquiped)
             {
                 itemInstence.transform.GetChild(0).GetComponent<TextMeshProUGUI>().SetText(targetItem.GetNameTranslation(Language.Ja));

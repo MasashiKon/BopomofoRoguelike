@@ -14,7 +14,6 @@ public class Item : MonoBehaviour
 
     public virtual void Use(PlayerController player, GameObject menu, int index)
     {
-
         UIManager uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
         uiManager.items.RemoveAt(index);
         MenuManager menuManager = GameObject.Find("Menu Panel").GetComponent<MenuManager>();
@@ -78,6 +77,11 @@ public class Item : MonoBehaviour
     }
 
     public virtual void Equip(GameObject menu, int index)
+    {
+
+    }
+
+    public virtual void EquipWithoutText(int index)
     {
 
     }

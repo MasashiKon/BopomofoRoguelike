@@ -36,6 +36,21 @@ public class Shield : Item
         StartCoroutine(RenderTextAndProcessTurn(GetNameTranslation(Language.Ja) + "を装備した"));
     }
 
+    public override void EquipWithoutText(int index)
+    {
+        isEquiped = true;
+        UIManager uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        GameObject player = GameObject.Find("Player");
+        GameObject copiedItem = Instantiate(uiManager.items[index], player.transform.position, player.transform.rotation);
+        copiedItem.transform.SetParent(player.transform);
+        copiedItem.GetComponent<SpriteRenderer>().sortingOrder = 4;
+        copiedItem.transform.localPosition = new Vector3(copiedItem.transform.localPosition.x - 0.2f, copiedItem.transform.localPosition.y + 0.4f, copiedItem.transform.localPosition.z);
+        uiManager.isPaused = false;
+        GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = gameObject.GetComponent<Shield>();
+        PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        playerController.shield = gameObject.GetComponent<Shield>();
+    }
+
     public override void Off(GameObject menu, int index)
     {
         isEquiped = false;

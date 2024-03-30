@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     public bool isPlayerMove = false;
     public bool isPlayerUseItem = false;
     public int hp = 15;
+    public int maxHP = 15;
     public Slider slider;
     public GameObject menuPanel;
     public GameObject stairPanel;
@@ -27,6 +28,7 @@ public class PlayerController : MonoBehaviour
     private TurnManager turnManager;
     private UIManager uiManager;
     private Animator animator;
+    private SceneReloader sceneReloader;
     private bool isCameraMoving = false;
     private Vector3 cameraPrevPos = new Vector3(0, 0, -10);
     private Vector3 cameraCurrentPos = new Vector3(0, 0, -10);
@@ -39,6 +41,7 @@ public class PlayerController : MonoBehaviour
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
         textMessage = GameObject.Find("Message").GetComponent<TextMeshProUGUI>();
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        sceneReloader = GameObject.Find("Scene Reloader").GetComponent<SceneReloader>();
         animator = transform.GetChild(0).GetComponent<Animator>();
         field = dungeonGenerator.field;
 
@@ -47,8 +50,15 @@ public class PlayerController : MonoBehaviour
 
         turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
         gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+
+        if (sceneReloader.playerHP != null)
+        {
+            hp = (int)sceneReloader.playerHP;
+            sceneReloader.playerHP = null;
+        }
+
         isPlayerMove = true;
-        slider.maxValue = hp;
+        slider.maxValue = maxHP;
         slider.value = hp;
 
         isCameraMoving = true;
@@ -205,6 +215,7 @@ public class PlayerController : MonoBehaviour
         if (turnManager.objectInfo[playerPosition[0], playerPosition[1]].Find(ob => ob.CompareTag("Stair")))
         {
             stairPanel.SetActive(true);
+            stairPanel.GetComponent<StairManager>().isFreeze = true;
         }
         else
         {

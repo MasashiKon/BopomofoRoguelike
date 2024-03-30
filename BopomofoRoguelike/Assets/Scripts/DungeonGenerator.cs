@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using TMPro;
 
 public class DungeonGenerator : MonoBehaviour
 {
@@ -18,6 +19,7 @@ public class DungeonGenerator : MonoBehaviour
 
     private TurnManager turnManager;
     private PrefabManager prefabManager;
+    private SceneReloader sceneReloader;
     private List<int[]> route = new List<int[]>();
 
     // Start is called before the first frame update
@@ -25,6 +27,7 @@ public class DungeonGenerator : MonoBehaviour
     {
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
         prefabManager = GameObject.Find("Prefab Manager").GetComponent<PrefabManager>();
+        sceneReloader = GameObject.Find("Scene Reloader").GetComponent<SceneReloader>();
 
         for (int i = 0; i < dungeonSize; i++)
         {
@@ -182,6 +185,8 @@ public class DungeonGenerator : MonoBehaviour
                 availableCell.RemoveAt(randomIndex);
             }
         }
+
+        GameObject.Find("Floor Text").GetComponent<TextMeshProUGUI>().SetText($"Floor {sceneReloader.floor}");
 
         player.SetActive(true);
     }

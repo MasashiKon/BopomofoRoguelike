@@ -6,8 +6,11 @@ using UnityEngine.UI;
 
 public class StairManager : MonoBehaviour
 {
+    public bool isFreeze = false;
     private PlayerController playerController;
     private TurnManager turnManager;
+    private SceneReloader sceneReloader;
+    private UIManager uiManager;
     private int commandIndex = 0;
 
     // Start is called before the first frame update
@@ -15,7 +18,9 @@ public class StairManager : MonoBehaviour
     {
         playerController = GameObject.Find("Player Wrapper").GetComponent<PlayerController>();
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
-        ChangeColorSelected();
+        sceneReloader = GameObject.Find("Scene Reloader").GetComponent<SceneReloader>();
+        uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        isFreeze = true;
     }
 
     // Update is called once per frame
@@ -37,10 +42,18 @@ public class StairManager : MonoBehaviour
         {
             if (commandIndex == 0)
             {
+                sceneReloader.playerHP = playerController.hp;
+                sceneReloader.floor++;
+                for (int i = 0; i < uiManager.items.Count; i++)
+                {
+                    Item item = uiManager.items[i].GetComponent<Item>();
+                    sceneReloader.items.Add(new ItemParameter(item.name.Replace("(Clone)", ""), item.isEquiped));
+                }
                 SceneManager.LoadScene(SceneManager.GetActiveScene().name);
             }
             else if (commandIndex == 1)
             {
+                isFreeze = false;
                 turnManager.ProcessTurn();
                 gameObject.SetActive(false);
             }

@@ -7,16 +7,57 @@ public class UIManager : MonoBehaviour
     public GameObject menuPanel;
     public List<GameObject> items = new List<GameObject>();
     public bool isPaused = false;
+    public GameObject stairPanel;
 
     // Start is called before the first frame update
     void Start()
     {
+        SceneReloader sceneReloader = GameObject.Find("Scene Reloader").GetComponent<SceneReloader>();
+        PrefabManager prefabManager = GameObject.Find("Prefab Manager").GetComponent<PrefabManager>();
 
+        for (int i = 0; i < sceneReloader.items.Count; i++)
+        {
+            if (sceneReloader.items[i].name == "Item")
+            {
+                GameObject item = Instantiate(prefabManager.items[0]);
+                items.Add(item);
+            }
+            else if (sceneReloader.items[i].name == "Herb")
+            {
+                GameObject item = Instantiate(prefabManager.items[1]);
+                items.Add(item);
+            }
+            else if (sceneReloader.items[i].name == "Sword")
+            {
+                GameObject item = Instantiate(prefabManager.items[2]);
+                items.Add(item);
+                if (sceneReloader.items[i].isEquiped)
+                {
+                    item.GetComponent<Item>().EquipWithoutText(i);
+                }
+            }
+            else if (sceneReloader.items[i].name == "Shield")
+            {
+                GameObject item = Instantiate(prefabManager.items[3]);
+                items.Add(item);
+                if (sceneReloader.items[i].isEquiped)
+                {
+                    item.GetComponent<Item>().EquipWithoutText(i);
+                }
+            }
+
+        }
+
+        while (sceneReloader.items.Count > 0)
+        {
+            sceneReloader.items.RemoveAt(0);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (stairPanel.GetComponent<StairManager>().isFreeze) return;
         if (Input.GetKeyDown("tab"))
         {
             isPaused = !isPaused;
