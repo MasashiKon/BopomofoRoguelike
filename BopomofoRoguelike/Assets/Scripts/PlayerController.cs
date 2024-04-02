@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -197,9 +198,13 @@ public class PlayerController : MonoBehaviour
     public void DecreaseHP(int damage)
     {
         int calcedDamage = damage - playerDefence - (shield?.GetSwordDefence() ?? 0) > 1 ? damage - playerDefence - (shield?.GetSwordDefence() ?? 0) : 1;
-        hp -= calcedDamage > 1 ? calcedDamage : 1;
+        hp -= calcedDamage;
         textMessage.SetText($"{calcedDamage}のダメージ！");
         slider.value = hp;
+        if(hp < 1)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+        }
     }
 
     public void IncreaseHP(int healAmount)
