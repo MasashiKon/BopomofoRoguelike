@@ -203,6 +203,9 @@ public class PlayerController : MonoBehaviour
         slider.value = hp;
         if(hp < 1)
         {
+            sceneReloader.playerHP = 15;
+            sceneReloader.floor = 1;
+            sceneReloader.items = new List<ItemParameter>();
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
     }
