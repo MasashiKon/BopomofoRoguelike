@@ -6,6 +6,7 @@ public class UIManager : MonoBehaviour
 {
     public GameObject menuPanel;
     public List<GameObject> items = new List<GameObject>();
+    public bool isFreeze = false;
     public bool isPaused = false;
     public GameObject stairPanel;
 
@@ -57,7 +58,7 @@ public class UIManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (stairPanel.GetComponent<StairManager>().isFreeze) return;
+        if (isFreeze) return;
         if (Input.GetKeyDown("tab"))
         {
             isPaused = !isPaused;

@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
@@ -22,6 +21,7 @@ public class PlayerController : MonoBehaviour
     public int playerDefence = 0;
     public Shield shield;
     public GameObject mainCamera;
+    public GameObject retryPanel;
 
     private TextMeshProUGUI textMessage;
     private DungeonGenerator dungeonGenerator;
@@ -73,7 +73,7 @@ public class PlayerController : MonoBehaviour
     {
         if (turnManager.isReadyNextMove && !uiManager.isPaused)
         {
-            if (Input.GetKey("up"))
+            if (Input.GetKey("up") || Input.GetKey("w"))
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
@@ -101,7 +101,7 @@ public class PlayerController : MonoBehaviour
                 NextFloorOrStay();
 
             }
-            else if (Input.GetKey("down"))
+            else if (Input.GetKey("down") || Input.GetKey("s"))
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
@@ -129,7 +129,7 @@ public class PlayerController : MonoBehaviour
                 NextFloorOrStay();
 
             }
-            else if (Input.GetKey("left"))
+            else if (Input.GetKey("left") || Input.GetKey("a"))
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
@@ -157,7 +157,7 @@ public class PlayerController : MonoBehaviour
                 NextFloorOrStay();
 
             }
-            else if (Input.GetKey("right"))
+            else if (Input.GetKey("right") || Input.GetKey("d"))
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 270);
@@ -172,6 +172,122 @@ public class PlayerController : MonoBehaviour
 
                     }
                     playerPosition[1]++;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    isPlayerMove = true;
+
+                }
+
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
+
+            }
+            else if (Input.GetKey("e"))
+            {
+                turnManager.isReadyNextMove = false;
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 315);
+                if (field[playerPosition[0] - 1, playerPosition[1] + 1] != 0 && (turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] + 1] == null || !turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] + 1].Exists(ob => ob.CompareTag("Enemy"))))
+                {
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
+                    playerPosition[0]--;
+                    playerPosition[1]++;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    isPlayerMove = true;
+
+                }
+
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
+
+            }
+            else if (Input.GetKey("c"))
+            {
+                turnManager.isReadyNextMove = false;
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 225);
+                if (field[playerPosition[0] + 1, playerPosition[1] + 1] != 0 && (turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] + 1] == null || !turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] + 1].Exists(ob => ob.CompareTag("Enemy"))))
+                {
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
+                    playerPosition[0]++;
+                    playerPosition[1]++;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    isPlayerMove = true;
+
+                }
+
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
+
+            }
+            else if (Input.GetKey("z"))
+            {
+                turnManager.isReadyNextMove = false;
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 135);
+                if (field[playerPosition[0] + 1, playerPosition[1] - 1] != 0 && (turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] - 1] == null || !turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] - 1].Exists(ob => ob.CompareTag("Enemy"))))
+                {
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
+                    playerPosition[0]++;
+                    playerPosition[1]--;
+                    turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
+                    gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+                    isPlayerMove = true;
+
+                }
+
+                isCameraMoving = true;
+                cameraCurrentPos = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y - 1, -10);
+                StartCoroutine(MoveCamera());
+
+                NextFloorOrStay();
+
+            }
+            else if (Input.GetKey("q"))
+            {
+                turnManager.isReadyNextMove = false;
+                gameObject.transform.rotation = Quaternion.Euler(0, 0, 45);
+                if (field[playerPosition[0] - 1, playerPosition[1] - 1] != 0 && (turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] - 1] == null || !turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] - 1].Exists(ob => ob.CompareTag("Enemy"))))
+                {
+                    for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
+                    {
+                        if (turnManager.objectInfo[playerPosition[0], playerPosition[1]][i] == gameObject)
+                        {
+                            turnManager.objectInfo[playerPosition[0], playerPosition[1]].RemoveAt(i);
+                        }
+
+                    }
+                    playerPosition[0]--;
+                    playerPosition[1]--;
                     turnManager.objectInfo[playerPosition[0], playerPosition[1]].Add(gameObject);
                     gameObject.transform.position = new Vector3(playerPosition[1] - DungeonGenerator.dungeonSize / 2, playerPosition[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     isPlayerMove = true;
@@ -201,12 +317,9 @@ public class PlayerController : MonoBehaviour
         hp -= calcedDamage;
         textMessage.SetText($"{calcedDamage}のダメージ！");
         slider.value = hp;
-        if(hp < 1)
+        if (hp < 1)
         {
-            sceneReloader.playerHP = 15;
-            sceneReloader.floor = 1;
-            sceneReloader.items = new List<ItemParameter>();
-            SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+            retryPanel.SetActive(true);
         }
     }
 

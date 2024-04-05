@@ -20,7 +20,7 @@ public class StairManager : MonoBehaviour
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
         sceneReloader = GameObject.Find("Scene Reloader").GetComponent<SceneReloader>();
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
-        isFreeze = true;
+        uiManager.isFreeze = true;
     }
 
     // Update is called once per frame
@@ -53,7 +53,7 @@ public class StairManager : MonoBehaviour
             }
             else if (commandIndex == 1)
             {
-                isFreeze = false;
+                uiManager.isFreeze = false;
                 turnManager.ProcessTurn();
                 gameObject.SetActive(false);
             }
