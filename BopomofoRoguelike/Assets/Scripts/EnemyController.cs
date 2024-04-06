@@ -91,8 +91,51 @@ public class EnemyController : MonoBehaviour
                             gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
                         }
                     }
+                    if (!isPlayerAdjacent)
+                    {
+                        foreach (GameObject anyOb in turnManager.objectInfo[pos[0] - 1, pos[1] + 1])
+                        {
+                            if (anyOb.CompareTag("Player"))
+                            {
+                                isPlayerAdjacent = true;
+                                gameObject.transform.rotation = Quaternion.Euler(0, 0, 315);
+                            }
+                        }
+                        if (!isPlayerAdjacent)
+                        {
+                            foreach (GameObject anyOb in turnManager.objectInfo[pos[0] + 1, pos[1] + 1])
+                            {
+                                if (anyOb.CompareTag("Player"))
+                                {
+                                    isPlayerAdjacent = true;
+                                    gameObject.transform.rotation = Quaternion.Euler(0, 0, 225);
+                                }
+                            }
+                            if (!isPlayerAdjacent)
+                            {
+                                foreach (GameObject anyOb in turnManager.objectInfo[pos[0] + 1, pos[1] - 1])
+                                {
+                                    if (anyOb.CompareTag("Player"))
+                                    {
+                                        isPlayerAdjacent = true;
+                                        gameObject.transform.rotation = Quaternion.Euler(0, 0, 135);
+                                    }
+                                }
+                                if (!isPlayerAdjacent)
+                                {
+                                    foreach (GameObject anyOb in turnManager.objectInfo[pos[0] - 1, pos[1] - 1])
+                                    {
+                                        if (anyOb.CompareTag("Player"))
+                                        {
+                                            isPlayerAdjacent = true;
+                                            gameObject.transform.rotation = Quaternion.Euler(0, 0, 45);
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-
             }
 
         }
@@ -128,6 +171,22 @@ public class EnemyController : MonoBehaviour
             if (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
             {
                 availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+            }
+            if (field[pos[0] - 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+            }
+            if (field[pos[0] + 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+            }
+            if (field[pos[0] + 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+            }
+            if (field[pos[0] - 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
             }
 
             if (availableCell.Count != 0)
