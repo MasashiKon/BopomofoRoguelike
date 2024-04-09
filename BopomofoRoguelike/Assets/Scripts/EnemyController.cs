@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
@@ -18,7 +19,11 @@ public class EnemyController : MonoBehaviour
         above,
         right,
         below,
-        left
+        left,
+        aboveRight,
+        aboveLeft,
+        belowRight,
+        belowLeft,
     }
     public List<int> pos;
     public EnemyState state = EnemyState.waiting;
@@ -30,6 +35,7 @@ public class EnemyController : MonoBehaviour
     private int[,] field;
     private TurnManager turnManager;
     private int hp = 10;
+    private Direction currentDirection;
     // Start is called before the first frame update
     void Start()
     {
@@ -38,6 +44,7 @@ public class EnemyController : MonoBehaviour
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
         textMessage = GameObject.Find("Message").GetComponent<TextMeshProUGUI>();
         field = dungeonGenerator.field;
+        currentDirection = (Direction)Enum.GetValues(typeof(Direction)).GetValue(UnityEngine.Random.Range(0, 8));
     }
 
     // Update is called once per frame
@@ -145,7 +152,7 @@ public class EnemyController : MonoBehaviour
             textMessage.SetText("モンスターの攻撃！");
             gameObject.transform.GetChild(0).GetComponent<Animator>().Play("PlayerAttack");
             yield return new WaitForSeconds(0.3f);
-            player.GetComponent<PlayerController>().DecreaseHP(Random.Range(3, 6));
+            player.GetComponent<PlayerController>().DecreaseHP(UnityEngine.Random.Range(3, 6));
 
             yield return new WaitForSeconds(0.5f);
 
@@ -155,56 +162,204 @@ public class EnemyController : MonoBehaviour
         else
         {
             // Move
-            List<int[]> availableCell = new List<int[]>();
-            if (field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            if (currentDirection == Direction.above && field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
             {
-                availableCell.Add(new int[] { pos[0] + 1, pos[1] });
-            }
-            if (field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
-            {
-                availableCell.Add(new int[] { pos[0] - 1, pos[1] });
-            }
-            if (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
-            {
-                availableCell.Add(new int[] { pos[0], pos[1] + 1 });
-            }
-            if (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
-            {
-                availableCell.Add(new int[] { pos[0], pos[1] - 1 });
-            }
-            if (field[pos[0] - 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
-            {
-                availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
-            }
-            if (field[pos[0] + 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
-            {
-                availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
-            }
-            if (field[pos[0] + 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
-            {
-                availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
-            }
-            if (field[pos[0] - 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
-            {
-                availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
-            }
-
-            if (availableCell.Count != 0)
-            {
-                int randomIndex = Random.Range(0, availableCell.Count + 1);
-                if (randomIndex != availableCell.Count)
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
                 {
-                    for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
                     {
-                        if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0] - 1, pos[1] };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else if (currentDirection == Direction.aboveRight && field[pos[0] - 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                {
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                    {
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0] - 1, pos[1] + 1 };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else if (currentDirection == Direction.right && field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                {
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                    {
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0], pos[1] + 1 };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else if (currentDirection == Direction.belowRight && field[pos[0] + 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                {
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                    {
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0] + 1, pos[1] + 1 };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else if (currentDirection == Direction.below && field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                {
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                    {
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0] + 1, pos[1] };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else if (currentDirection == Direction.belowLeft && field[pos[0] + 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                {
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                    {
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0] + 1, pos[1] - 1 };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else if (currentDirection == Direction.left && field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                {
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                    {
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0], pos[1] - 1 };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else if (currentDirection == Direction.aboveLeft && field[pos[0] - 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+            {
+                for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+                {
+                    if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                    {
+                        turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                    }
+                }
+
+                pos = new List<int> { pos[0] - 1, pos[1] - 1 };
+                turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
+            }
+            else
+            {
+                List<int[]> availableCell = new List<int[]>();
+                if (field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                }
+                if (field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                }
+                if (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                }
+                if (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                }
+                if (field[pos[0] - 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                }
+                if (field[pos[0] + 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                }
+                if (field[pos[0] + 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                }
+                if (field[pos[0] - 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                {
+                    availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                }
+
+                if (availableCell.Count != 0)
+                {
+                    int randomIndex = UnityEngine.Random.Range(0, availableCell.Count + 1);
+                    if (randomIndex != availableCell.Count)
+                    {
+                        for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
                         {
-                            turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                            if (turnManager.objectInfo[pos[0], pos[1]][i] == gameObject)
+                            {
+                                turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
+                            }
+
+                        }
+                        if (pos[0] - availableCell[randomIndex][0] == 1 && pos[1] - availableCell[randomIndex][1] == 0)
+                        {
+                            currentDirection = Direction.above;
+                        }
+                        else if (pos[0] - availableCell[randomIndex][0] == 1 && pos[1] - availableCell[randomIndex][1] == -1)
+                        {
+                            currentDirection = Direction.aboveRight;
+                        }
+                        else if (pos[0] - availableCell[randomIndex][0] == 0 && pos[1] - availableCell[randomIndex][1] == -1)
+                        {
+                            currentDirection = Direction.right;
+                        }
+                        else if (pos[0] - availableCell[randomIndex][0] == -1 && pos[1] - availableCell[randomIndex][1] == -1)
+                        {
+                            currentDirection = Direction.belowRight;
+                        }
+                        else if (pos[0] - availableCell[randomIndex][0] == -1 && pos[1] - availableCell[randomIndex][1] == 0)
+                        {
+                            currentDirection = Direction.below;
+                        }
+                        else if (pos[0] - availableCell[randomIndex][0] == -1 && pos[1] - availableCell[randomIndex][1] == 1)
+                        {
+                            currentDirection = Direction.belowLeft;
+                        }
+                        else if (pos[0] - availableCell[randomIndex][0] == 0 && pos[1] - availableCell[randomIndex][1] == 1)
+                        {
+                            currentDirection = Direction.left;
+                        }
+                        else if (pos[0] - availableCell[randomIndex][0] == 0 && pos[1] - availableCell[randomIndex][1] == 1)
+                        {
+                            currentDirection = Direction.aboveLeft;
                         }
 
+                        pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
+                        turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
+                        gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     }
-                    pos = new List<int> { availableCell[randomIndex][0], availableCell[randomIndex][1] };
-                    turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
-                    gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                 }
             }
         }
@@ -224,9 +379,9 @@ public class EnemyController : MonoBehaviour
         textMessage.SetText($"モンスターに{damage}のダメージ！");
         if (hp <= 0)
         {
-            for(int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
+            for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
             {
-                if(turnManager.objectInfo[pos[0], pos[1]][i].CompareTag("Enemy"))
+                if (turnManager.objectInfo[pos[0], pos[1]][i].CompareTag("Enemy"))
                 {
                     turnManager.objectInfo[pos[0], pos[1]].RemoveAt(i);
                     break;
