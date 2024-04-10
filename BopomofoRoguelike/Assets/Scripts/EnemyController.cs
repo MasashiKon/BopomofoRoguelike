@@ -279,35 +279,163 @@ public class EnemyController : MonoBehaviour
                 List<int[]> availableCell = new List<int[]>();
                 if (field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                    if (currentDirection == Direction.above)
+                    {
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] });
+                    }
                 }
                 if (field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                    if (currentDirection == Direction.below)
+                    {
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] });
+                    }
                 }
                 if (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                    if (currentDirection == Direction.left)
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] + 1 });
+                    }
                 }
                 if (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                    if (currentDirection == Direction.right)
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0], pos[1] - 1 });
+                    }
                 }
-                if (field[pos[0] - 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                if (field[pos[0] - 1, pos[1] + 1] != 0 && field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                    if (currentDirection == Direction.belowLeft)
+                    {
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] + 1 });
+                    }
                 }
-                if (field[pos[0] + 1, pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                if (field[pos[0] + 1, pos[1] + 1] != 0 && field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                    if (currentDirection == Direction.aboveLeft)
+                    {
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] + 1 });
+                    }
                 }
-                if (field[pos[0] + 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                if (field[pos[0] + 1, pos[1] - 1] != 0 && field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                    if (currentDirection == Direction.aboveRight)
+                    {
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] + 1, pos[1] - 1 });
+                    }
                 }
-                if (field[pos[0] - 1, pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
+                if (field[pos[0] - 1, pos[1] - 1] != 0 && field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
                 {
-                    availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                    if (currentDirection == Direction.belowRight)
+                    {
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                    }
+                    else
+                    {
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                        availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                    }
                 }
 
                 if (availableCell.Count != 0)

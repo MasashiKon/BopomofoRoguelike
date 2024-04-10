@@ -189,7 +189,7 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 315);
-                if (field[playerPosition[0] - 1, playerPosition[1] + 1] != 0 && (turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] + 1] == null || !turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] + 1].Exists(ob => ob.CompareTag("Enemy"))))
+                if (field[playerPosition[0] - 1, playerPosition[1] + 1] != 0 && field[playerPosition[0] - 1, playerPosition[1]] != 0 && field[playerPosition[0], playerPosition[1] + 1] != 0 && (turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] + 1] == null || !turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] + 1].Exists(ob => ob.CompareTag("Enemy"))))
                 {
                     for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
                     {
@@ -218,7 +218,7 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 225);
-                if (field[playerPosition[0] + 1, playerPosition[1] + 1] != 0 && (turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] + 1] == null || !turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] + 1].Exists(ob => ob.CompareTag("Enemy"))))
+                if (field[playerPosition[0] + 1, playerPosition[1] + 1] != 0 && field[playerPosition[0] + 1, playerPosition[1]] != 0 && field[playerPosition[0], playerPosition[1] + 1] != 0 && (turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] + 1] == null || !turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] + 1].Exists(ob => ob.CompareTag("Enemy"))))
                 {
                     for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
                     {
@@ -247,7 +247,7 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 135);
-                if (field[playerPosition[0] + 1, playerPosition[1] - 1] != 0 && (turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] - 1] == null || !turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] - 1].Exists(ob => ob.CompareTag("Enemy"))))
+                if (field[playerPosition[0] + 1, playerPosition[1] - 1] != 0 && field[playerPosition[0] + 1, playerPosition[1]] != 0 && field[playerPosition[0], playerPosition[1] - 1] != 0 && (turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] - 1] == null || !turnManager.objectInfo[playerPosition[0] + 1, playerPosition[1] - 1].Exists(ob => ob.CompareTag("Enemy"))))
                 {
                     for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
                     {
@@ -276,7 +276,7 @@ public class PlayerController : MonoBehaviour
             {
                 turnManager.isReadyNextMove = false;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 45);
-                if (field[playerPosition[0] - 1, playerPosition[1] - 1] != 0 && (turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] - 1] == null || !turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] - 1].Exists(ob => ob.CompareTag("Enemy"))))
+                if (field[playerPosition[0] - 1, playerPosition[1] - 1] != 0 && field[playerPosition[0] - 1, playerPosition[1]] != 0 && field[playerPosition[0], playerPosition[1] - 1] != 0 && (turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] - 1] == null || !turnManager.objectInfo[playerPosition[0] - 1, playerPosition[1] - 1].Exists(ob => ob.CompareTag("Enemy"))))
                 {
                     for (int i = 0; i < turnManager.objectInfo[playerPosition[0], playerPosition[1]].Count; i++)
                     {
