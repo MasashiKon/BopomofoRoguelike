@@ -3272,8 +3272,8 @@ MonoBehaviour:
   isPlayerAttack: 0
   isPlayerMove: 0
   isPlayerUseItem: 0
-  hp: 15
-  maxHP: 15
+  hp: 150000000
+  maxHP: 150000000
   slider: {fileID: 606790852}
   menuPanel: {fileID: 0}
   stairPanel: {fileID: 1791353438}

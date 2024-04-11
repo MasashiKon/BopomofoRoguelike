@@ -10,8 +10,8 @@ public class PlayerController : MonoBehaviour
     public bool isPlayerAttack = false;
     public bool isPlayerMove = false;
     public bool isPlayerUseItem = false;
-    public int hp = 15;
-    public int maxHP = 15;
+    public int hp = 15000000;
+    public int maxHP = 15000000;
     public Slider slider;
     public GameObject menuPanel;
     public GameObject stairPanel;
