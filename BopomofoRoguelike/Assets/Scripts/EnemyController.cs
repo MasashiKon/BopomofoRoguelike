@@ -163,6 +163,46 @@ public class EnemyController : MonoBehaviour
         else
         {
             // Move
+            bool IsPlayerAtSameRoom()
+            {
+                if (field[pos[0], pos[1]] != 2) return false;
+
+                int top = pos[0];
+                int bottom = pos[0];
+                int left = pos[1];
+                int right = pos[1];
+
+                while (field[top - 1, pos[1]] == 2)
+                {
+                    top--;
+                }
+                while (field[bottom + 1, pos[1]] == 2)
+                {
+                    bottom++;
+                }
+                while (field[pos[0], left - 1] == 2)
+                {
+                    left--;
+                }
+                while (field[pos[0], right + 1] == 2)
+                {
+                    right++;
+                }
+
+                for (int i = top; i <= bottom; i++)
+                {
+                    for (int j = left; j <= right; j++)
+                    {
+                        foreach (GameObject obj in turnManager.objectInfo[i, j])
+                        {
+                            if (obj.CompareTag("Player")) return true;
+                        }
+
+                    }
+                }
+
+                return false;
+            }
             if (field[pos[0], pos[1]] == 2)
             {
                 howManyTurnsInARoom++;
@@ -171,7 +211,51 @@ public class EnemyController : MonoBehaviour
             {
                 howManyTurnsInARoom = 0;
             }
-            if (howManyTurnsInARoom > 50)
+            if (IsPlayerAtSameRoom())
+            {
+                int dx = player.playerPosition[1] - pos[1];
+                int dy = -(player.playerPosition[0] - pos[0]);
+
+                double angleRadians = Math.Atan2(dy, dx);
+                double angleDegrees = angleRadians * (180 / Math.PI);
+                if (angleDegrees < 0)
+                {
+                    angleDegrees += 360;
+                }
+                if (angleDegrees >= 337.5 || angleDegrees < 22.5)
+                {
+                    currentDirection = Direction.right;
+                }
+                else if (angleDegrees >= 22.5 && angleDegrees < 67.5)
+                {
+                    currentDirection = Direction.aboveRight;
+                }
+                else if (angleDegrees >= 67.5 && angleDegrees < 112.5)
+                {
+                    currentDirection = Direction.above;
+                }
+                else if (angleDegrees >= 112.5 && angleDegrees < 157.5)
+                {
+                    currentDirection = Direction.aboveLeft;
+                }
+                else if (angleDegrees >= 157.5 && angleDegrees < 202.5)
+                {
+                    currentDirection = Direction.left;
+                }
+                else if (angleDegrees >= 202.5 && angleDegrees < 247.5)
+                {
+                    currentDirection = Direction.belowLeft;
+                }
+                else if (angleDegrees >= 247.5 && angleDegrees < 292.5)
+                {
+                    currentDirection = Direction.below;
+                }
+                else if (angleDegrees >= 292.5 && angleDegrees < 337.5)
+                {
+                    currentDirection = Direction.belowRight;
+                }
+            }
+            else if (howManyTurnsInARoom > 50)
             {
                 int rangeOfSearching = 1;
                 bool exitFound = false;
