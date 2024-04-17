@@ -37,6 +37,7 @@ public class EnemyController : MonoBehaviour
     private int hp = 10;
     private Direction currentDirection;
     private int howManyTurnsInARoom = 0;
+    private List<int> distinatedExit;
     // Start is called before the first frame update
     void Start()
     {
@@ -210,11 +211,62 @@ public class EnemyController : MonoBehaviour
             else
             {
                 howManyTurnsInARoom = 0;
+                distinatedExit = null;
             }
+
             if (IsPlayerAtSameRoom())
             {
                 int dx = player.playerPosition[1] - pos[1];
                 int dy = -(player.playerPosition[0] - pos[0]);
+
+                double angleRadians = Math.Atan2(dy, dx);
+                double angleDegrees = angleRadians * (180 / Math.PI);
+                if (angleDegrees < 0)
+                {
+                    angleDegrees += 360;
+                }
+                if (angleDegrees >= 337.5 || angleDegrees < 22.5)
+                {
+                    currentDirection = Direction.right;
+                }
+                else if (angleDegrees >= 22.5 && angleDegrees < 67.5)
+                {
+                    currentDirection = Direction.aboveRight;
+                }
+                else if (angleDegrees >= 67.5 && angleDegrees < 112.5)
+                {
+                    currentDirection = Direction.above;
+                }
+                else if (angleDegrees >= 112.5 && angleDegrees < 157.5)
+                {
+                    currentDirection = Direction.aboveLeft;
+                }
+                else if (angleDegrees >= 157.5 && angleDegrees < 202.5)
+                {
+                    currentDirection = Direction.left;
+                }
+                else if (angleDegrees >= 202.5 && angleDegrees < 247.5)
+                {
+                    currentDirection = Direction.belowLeft;
+                }
+                else if (angleDegrees >= 247.5 && angleDegrees < 292.5)
+                {
+                    currentDirection = Direction.below;
+                }
+                else if (angleDegrees >= 292.5 && angleDegrees < 337.5)
+                {
+                    currentDirection = Direction.belowRight;
+                }
+
+                if (field[player.playerPosition[0], player.playerPosition[1]] == 1)
+                {
+                    distinatedExit = new List<int> { player.playerPosition[0], player.playerPosition[1] };
+                }
+            }
+            else if (distinatedExit != null)
+            {
+                int dx = distinatedExit[1] - pos[1];
+                int dy = -(distinatedExit[0] - pos[0]);
 
                 double angleRadians = Math.Atan2(dy, dx);
                 double angleDegrees = angleRadians * (180 / Math.PI);
@@ -712,7 +764,7 @@ public class EnemyController : MonoBehaviour
                 turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
                 gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
             }
-            else if (currentDirection == Direction.aboveRight && (field[pos[0] - 1, pos[1] + 1] == 0 || turnManager.objectInfo[pos[0] - 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) && ((field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))))
+            else if (currentDirection == Direction.aboveRight && (field[pos[0] - 1, pos[1]] != 0 || field[pos[0], pos[1] + 1] != 0) && ((field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))))
             {
                 if (field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] == 0)
                 {
@@ -808,7 +860,7 @@ public class EnemyController : MonoBehaviour
                 turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
                 gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
             }
-            else if (currentDirection == Direction.belowRight && (field[pos[0] + 1, pos[1] + 1] == 0 || turnManager.objectInfo[pos[0] + 1, pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) && ((field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))))
+            else if (currentDirection == Direction.belowRight && (field[pos[0] + 1, pos[1]] != 0 || (field[pos[0], pos[1] + 1] != 0) && ((field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] + 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))))))
             {
                 if (field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] == 0)
                 {
@@ -904,7 +956,7 @@ public class EnemyController : MonoBehaviour
                 turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
                 gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
             }
-            else if (currentDirection == Direction.belowLeft && (field[pos[0] + 1, pos[1] - 1] == 0 || turnManager.objectInfo[pos[0] + 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) && ((field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))))
+            else if (currentDirection == Direction.belowLeft && (field[pos[0] + 1, pos[1]] != 0 || field[pos[0], pos[1] - 1] != 0) && ((field[pos[0] + 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))))
             {
                 if (field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] == 0)
                 {
@@ -1000,7 +1052,7 @@ public class EnemyController : MonoBehaviour
                 turnManager.objectInfo[pos[0], pos[1]].Add(gameObject);
                 gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
             }
-            else if (currentDirection == Direction.aboveLeft && (field[pos[0] - 1, pos[1] - 1] == 0 || turnManager.objectInfo[pos[0] - 1, pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) && ((field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))))
+            else if (currentDirection == Direction.aboveLeft && (field[pos[0] - 1, pos[1]] != 0 || field[pos[0], pos[1] - 1] != 0) && ((field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy"))) || (field[pos[0], pos[1] - 1] != 0 && !turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))))
             {
                 if (field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] == 0)
                 {
@@ -1284,7 +1336,6 @@ public class EnemyController : MonoBehaviour
                     }
                 }
             }
-            Debug.Log(currentDirection);
         }
 
         state = EnemyState.finishTurn;
