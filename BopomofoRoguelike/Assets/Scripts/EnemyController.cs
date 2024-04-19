@@ -60,84 +60,105 @@ public class EnemyController : MonoBehaviour
         state = EnemyState.takingAction;
 
         // Attack
-        bool isPlayerAdjacentAndCanAttack = false;
+        bool isPlayerAdjacent = false;
+        bool isAbleToAttack = false;
         foreach (GameObject anyOb in turnManager.objectInfo[pos[0] + 1, pos[1]])
         {
             if (anyOb.CompareTag("Player"))
             {
-                isPlayerAdjacentAndCanAttack = true;
+                isPlayerAdjacent = true;
+                isAbleToAttack = true;
                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 180);
             }
         }
-        if (!isPlayerAdjacentAndCanAttack)
+        if (!isPlayerAdjacent)
         {
             foreach (GameObject anyOb in turnManager.objectInfo[pos[0] - 1, pos[1]])
             {
                 if (anyOb.CompareTag("Player"))
                 {
-                    isPlayerAdjacentAndCanAttack = true;
+                    isPlayerAdjacent = true;
+                    isAbleToAttack = true;
                     gameObject.transform.rotation = Quaternion.Euler(0, 0, 0);
                 }
             }
 
-            if (!isPlayerAdjacentAndCanAttack)
+            if (!isPlayerAdjacent)
             {
                 foreach (GameObject anyOb in turnManager.objectInfo[pos[0], pos[1] + 1])
                 {
                     if (anyOb.CompareTag("Player"))
                     {
-                        isPlayerAdjacentAndCanAttack = true;
+                        isPlayerAdjacent = true;
+                        isAbleToAttack = true;
                         gameObject.transform.rotation = Quaternion.Euler(0, 0, 270);
                     }
                 }
-                if (!isPlayerAdjacentAndCanAttack)
+                if (!isPlayerAdjacent)
                 {
                     foreach (GameObject anyOb in turnManager.objectInfo[pos[0], pos[1] - 1])
                     {
                         if (anyOb.CompareTag("Player"))
                         {
-                            isPlayerAdjacentAndCanAttack = true;
+                            isPlayerAdjacent = true;
+                            isAbleToAttack = true;
                             gameObject.transform.rotation = Quaternion.Euler(0, 0, 90);
                         }
                     }
-                    if (!isPlayerAdjacentAndCanAttack)
+                    if (!isPlayerAdjacent)
                     {
                         foreach (GameObject anyOb in turnManager.objectInfo[pos[0] - 1, pos[1] + 1])
                         {
-                            if (anyOb.CompareTag("Player") && field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] != 0)
+                            if (anyOb.CompareTag("Player"))
                             {
-                                isPlayerAdjacentAndCanAttack = true;
+                                isPlayerAdjacent = true;
                                 gameObject.transform.rotation = Quaternion.Euler(0, 0, 315);
+                                if (field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] != 0)
+                                {
+                                    isAbleToAttack = true;
+                                }
                             }
                         }
-                        if (!isPlayerAdjacentAndCanAttack)
+                        if (!isPlayerAdjacent)
                         {
                             foreach (GameObject anyOb in turnManager.objectInfo[pos[0] + 1, pos[1] + 1])
                             {
-                                if (anyOb.CompareTag("Player") && field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] != 0)
+                                if (anyOb.CompareTag("Player"))
                                 {
-                                    isPlayerAdjacentAndCanAttack = true;
+                                    isPlayerAdjacent = true;
                                     gameObject.transform.rotation = Quaternion.Euler(0, 0, 225);
+                                    if (field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] + 1] != 0)
+                                    {
+                                        isAbleToAttack = true;
+                                    }
                                 }
                             }
-                            if (!isPlayerAdjacentAndCanAttack)
+                            if (!isPlayerAdjacent)
                             {
                                 foreach (GameObject anyOb in turnManager.objectInfo[pos[0] + 1, pos[1] - 1])
                                 {
-                                    if (anyOb.CompareTag("Player") && field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] != 0)
+                                    if (anyOb.CompareTag("Player"))
                                     {
-                                        isPlayerAdjacentAndCanAttack = true;
+                                        isPlayerAdjacent = true;
                                         gameObject.transform.rotation = Quaternion.Euler(0, 0, 135);
+                                        if (field[pos[0] + 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] != 0)
+                                        {
+                                            isAbleToAttack = true;
+                                        }
                                     }
                                 }
-                                if (!isPlayerAdjacentAndCanAttack)
+                                if (!isPlayerAdjacent)
                                 {
                                     foreach (GameObject anyOb in turnManager.objectInfo[pos[0] - 1, pos[1] - 1])
                                     {
-                                        if (anyOb.CompareTag("Player") && field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] != 0)
+                                        if (anyOb.CompareTag("Player"))
                                         {
-                                            isPlayerAdjacentAndCanAttack = true;
+                                            isPlayerAdjacent = true;
                                             gameObject.transform.rotation = Quaternion.Euler(0, 0, 45);
+                                            if (field[pos[0] - 1, pos[1]] != 0 && field[pos[0], pos[1] - 1] != 0)
+                                            {
+                                                isAbleToAttack = true;
+                                            }
                                         }
                                     }
                                 }
@@ -149,7 +170,7 @@ public class EnemyController : MonoBehaviour
 
         }
 
-        if (isPlayerAdjacentAndCanAttack)
+        if (isPlayerAdjacent && isAbleToAttack)
         {
             textMessage.SetText("モンスターの攻撃！");
             gameObject.transform.GetChild(0).GetComponent<Animator>().Play("PlayerAttack");
@@ -203,6 +224,36 @@ public class EnemyController : MonoBehaviour
                 }
 
                 return false;
+            }
+
+            bool IsAlleyForked()
+            {
+                int numOfAlley = 0;
+                if (field[pos[0] - 1, pos[1]] == 1)
+                {
+                    numOfAlley++;
+                }
+                if (field[pos[0] + 1, pos[1]] == 1)
+                {
+                    numOfAlley++;
+                }
+                if (field[pos[0], pos[1] + 1] == 1)
+                {
+                    numOfAlley++;
+                }
+                if (field[pos[0], pos[1] - 1] == 1)
+                {
+                    numOfAlley++;
+                }
+
+                if (numOfAlley > 2)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
             }
             if (field[pos[0], pos[1]] == 2)
             {
@@ -736,6 +787,99 @@ public class EnemyController : MonoBehaviour
                     }
                 }
             }
+            else if (IsAlleyForked())
+            {
+                List<Direction> directions = new List<Direction> { };
+
+                if (field[pos[0] - 1, pos[1]] == 1)
+                {
+                    if (currentDirection == Direction.below)
+                    {
+                        directions.Add(Direction.above);
+                    }
+                    else
+                    {
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                        directions.Add(Direction.above);
+                    }
+                }
+                if (field[pos[0] + 1, pos[1]] == 1)
+                {
+                    if (currentDirection == Direction.above)
+                    {
+                        directions.Add(Direction.below);
+                    }
+                    else
+                    {
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                        directions.Add(Direction.below);
+                    }
+                }
+                if (field[pos[0], pos[1] + 1] == 1)
+                {
+                    if (currentDirection == Direction.left)
+                    {
+                        directions.Add(Direction.right);
+                    }
+                    else
+                    {
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                        directions.Add(Direction.right);
+                    }
+                }
+                if (field[pos[0], pos[1] - 1] == 1)
+                {
+                    if (currentDirection == Direction.right)
+                    {
+                        directions.Add(Direction.left);
+                    }
+                    else
+                    {
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                        directions.Add(Direction.left);
+                    }
+                }
+
+                int randomInt = UnityEngine.Random.Range(0, directions.Count);
+
+                currentDirection = directions[randomInt];
+            }
             if (currentDirection == Direction.above && field[pos[0] - 1, pos[1]] != 0 && !turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Player") || ob.CompareTag("Enemy")))
             {
                 for (int i = 0; i < turnManager.objectInfo[pos[0], pos[1]].Count; i++)
@@ -1119,6 +1263,10 @@ public class EnemyController : MonoBehaviour
                         gameObject.transform.position = new Vector3(pos[1] - DungeonGenerator.dungeonSize / 2, pos[0] * -1 + DungeonGenerator.dungeonSize / 2, -1);
                     }
                 }
+            }
+            else if (isPlayerAdjacent && !isAbleToAttack)
+            {
+
             }
             else
             {
