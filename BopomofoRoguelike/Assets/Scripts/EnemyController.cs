@@ -228,6 +228,7 @@ public class EnemyController : MonoBehaviour
 
             bool IsAlleyForked()
             {
+                if (field[pos[0], pos[1]] != 1) return false;
                 int numOfAlley = 0;
                 if (field[pos[0] - 1, pos[1]] == 1)
                 {
@@ -1429,6 +1430,101 @@ public class EnemyController : MonoBehaviour
                         availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
                         availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
                         availableCell.Add(new int[] { pos[0] - 1, pos[1] - 1 });
+                    }
+                }
+                if (field[pos[0], pos[1]] == 1)
+                {
+                    if (currentDirection == Direction.above && turnManager.objectInfo[pos[0] - 1, pos[1]].Exists(ob => ob.CompareTag("Enemy")))
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                    }
+                    else if (currentDirection == Direction.right && turnManager.objectInfo[pos[0], pos[1] + 1].Exists(ob => ob.CompareTag("Enemy")))
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                    }
+                    else if (currentDirection == Direction.below && turnManager.objectInfo[pos[0] + 1, pos[1]].Exists(ob => ob.CompareTag("Enemy")))
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                    }
+                    else if (currentDirection == Direction.left && turnManager.objectInfo[pos[0], pos[1] - 1].Exists(ob => ob.CompareTag("Enemy")))
+                    {
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
+                        availableCell.Add(new int[] { pos[0], pos[1] });
                     }
                 }
 
