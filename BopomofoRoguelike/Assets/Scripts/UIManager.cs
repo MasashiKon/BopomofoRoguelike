@@ -5,6 +5,7 @@ using UnityEngine;
 public class UIManager : MonoBehaviour
 {
     public GameObject menuPanel;
+    [SerializeField] GameObject itemCreatePanel;
     public List<GameObject> items = new List<GameObject>();
     public bool isFreeze = false;
     public bool isPaused = false;
@@ -68,11 +69,32 @@ public class UIManager : MonoBehaviour
                 commandPanelManager.DestroyAllCommands();
                 commandPanelManager.isFocused = false;
             }
+            if (itemCreatePanel.activeSelf)
+            {
+                isPaused = !isPaused;
+                itemCreatePanel.SetActive(false);
+            }
             menuPanel.SetActive(!menuPanel.activeSelf);
             if (isPaused)
             {
                 menuPanel.GetComponent<MenuManager>().RerenderItems();
             }
+        }
+        else if (Input.GetKeyDown("r"))
+        {
+            isPaused = !isPaused;
+            if (!isPaused && GameObject.Find("Command Panel"))
+            {
+                CommandPanelManager commandPanelManager = GameObject.Find("Command Panel").GetComponent<CommandPanelManager>();
+                commandPanelManager.DestroyAllCommands();
+                commandPanelManager.isFocused = false;
+            }
+            if (menuPanel.activeSelf)
+            {
+                isPaused = !isPaused;
+                menuPanel.SetActive(false);
+            }
+            itemCreatePanel.SetActive(!itemCreatePanel.activeSelf);
         }
     }
 }
