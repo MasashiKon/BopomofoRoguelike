@@ -8,11 +8,16 @@ public class ItemCreateManager : MonoBehaviour
     public PrefabManager prefabManager;
     public UIManager uiManager;
     private bool[,] charTable = { { true, true, true, true, true, true, true, true, true, true, true, true },
+        { true, true, true, true, true, true, true, true, true, true, true, true },
     { true, false, true, true, true, true, true, true, true, true, true, true },
     { true, false, true, true, true, true, true, true, true, true, true, true },
     { true, false, true, true, true, false, false, true, false, false, true, true },
     { true, false, true, true, true, false, false, true, false, false, true, true }};
-    private int[] coor = { 0, 11 };
+    private int[] coor = { 1, 11 };
+    private int fontSizeDefault = 36;
+    private int fontSizePressed = 25;
+    private bool isSomeKeyPressed = false;
+    private string memo = "選定 一聲 刪除";
 
     // Start is called before the first frame update
     void Start()
@@ -24,45 +29,655 @@ public class ItemCreateManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.W))
+        if ((Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.UpArrow)) && !isSomeKeyPressed)
         {
-            coor[0] = (coor[0] - 1 + 4) % 4;
+            coor[0] = (coor[0] - 1 + 5) % 5;
             while (!charTable[coor[0], coor[1]])
             {
-                coor[0] = (coor[0] - 1 + 4) % 4;
+                coor[0] = (coor[0] - 1 + 5) % 5;
             }
+            ChangeSelectedChar();
         }
-        else if (Input.GetKeyDown(KeyCode.S))
+        else if ((Input.GetKeyDown(KeyCode.S) || Input.GetKeyDown(KeyCode.DownArrow)) && !isSomeKeyPressed)
         {
-            coor[0] = (coor[0] + 1) % 4;
+            coor[0] = (coor[0] + 1) % 5;
             while (!charTable[coor[0], coor[1]])
             {
-                coor[0] = (coor[0] + 1) % 4;
+                coor[0] = (coor[0] + 1) % 5;
             }
+            ChangeSelectedChar();
         }
-        if (Input.GetKeyDown(KeyCode.A))
+        if ((Input.GetKeyDown(KeyCode.A) || Input.GetKeyDown(KeyCode.LeftArrow)) && !isSomeKeyPressed)
         {
-            coor[1] = (coor[1] - 1 + 12) % 12;
-            while (!charTable[coor[0], coor[1]])
-            {
-                coor[0] = (coor[0] - 1 + 4) % 4;
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.D))
-        {
-            coor[1] = (coor[1] + 1) % 12;
-            while (!charTable[coor[0], coor[1]])
-            {
-                coor[0] = (coor[0] - 1 + 4) % 4;
-            }
-        }
 
+            if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
+            {
+                coor[1] = 1;
+            }
+            else if (coor[0] == 0 && (coor[1] == 5 || coor[1] == 4 || coor[1] == 3 || coor[1] == 2 || coor[1] == 1 || coor[1] == 0))
+            {
+                coor[1] = 11;
+            }
+            else
+            {
+                coor[1] = (coor[1] - 1 + 12) % 12;
+            }
+            while (!charTable[coor[0], coor[1]])
+            {
+                coor[0] = (coor[0] - 1 + 5) % 5;
+            }
+            ChangeSelectedChar();
+        }
+        else if ((Input.GetKeyDown(KeyCode.D) || Input.GetKeyDown(KeyCode.RightArrow)) && !isSomeKeyPressed)
+        {
+
+            if (coor[0] == 0 && coor[1] == 11)
+            {
+                coor[1] = 1;
+            }
+            else if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
+            {
+                coor[1] = 11;
+            }
+            else if (coor[0] == 0 && (coor[1] == 5 || coor[1] == 4 || coor[1] == 3 || coor[1] == 2 || coor[1] == 1 || coor[1] == 0))
+            {
+                coor[1] = 10;
+            }
+            else
+            {
+                coor[1] = (coor[1] + 1) % 12;
+            }
+            while (!charTable[coor[0], coor[1]])
+            {
+                coor[0] = (coor[0] - 1 + 5) % 5;
+            }
+            ChangeSelectedChar();
+        }
+        else if (Input.GetKeyDown(KeyCode.Return))
+        {
+            isSomeKeyPressed = true;
+            TextMeshProUGUI input = GameObject.Find("Kanji Input").GetComponent<TextMeshProUGUI>();
+            if (coor[0] == 0 && coor[1] == 11)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "決定")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+
+                }
+            }
+            else if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "一声")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+
+                }
+            }
+            else if (coor[0] == 0 && (coor[1] == 5 || coor[1] == 4 || coor[1] == 3 || coor[1] == 2 || coor[1] == 1 || coor[1] == 0))
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "削除")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                if (input.text.Length > 0)
+                {
+                    input.text = input.text.Remove(input.text.Length - 1);
+                }
+            }
+            else if (coor[0] == 1 && coor[1] == 11)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄅ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄅ";
+            }
+            else if (coor[0] == 2 && coor[1] == 11)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄆ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄆ";
+            }
+            else if (coor[0] == 3 && coor[1] == 11)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄇ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄇ";
+            }
+            else if (coor[0] == 4 && coor[1] == 11)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄈ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄈ";
+            }
+            else if (coor[0] == 1 && coor[1] == 10)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄉ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄉ";
+            }
+            else if (coor[0] == 2 && coor[1] == 10)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄊ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄊ";
+            }
+            else if (coor[0] == 3 && coor[1] == 10)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄋ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄋ";
+            }
+            else if (coor[0] == 4 && coor[1] == 10)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄌ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄌ";
+            }
+            else if (coor[0] == 1 && coor[1] == 9)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄍ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄍ";
+            }
+            else if (coor[0] == 2 && coor[1] == 9)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄎ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄎ";
+            }
+            else if (coor[0] == 3 && coor[1] == 9)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄏ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄏ";
+            }
+            else if (coor[0] == 1 && coor[1] == 8)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄐ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄐ";
+            }
+            else if (coor[0] == 2 && coor[1] == 8)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄑ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄑ";
+            }
+            else if (coor[0] == 3 && coor[1] == 8)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄒ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄒ";
+            }
+            else if (coor[0] == 1 && coor[1] == 7)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄓ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄓ";
+            }
+            else if (coor[0] == 2 && coor[1] == 7)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄔ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄔ";
+            }
+            else if (coor[0] == 3 && coor[1] == 7)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄕ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄕ";
+            }
+            else if (coor[0] == 4 && coor[1] == 7)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄖ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄖ";
+            }
+            else if (coor[0] == 1 && coor[1] == 6)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄗ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄗ";
+            }
+            else if (coor[0] == 2 && coor[1] == 6)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄘ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄘ";
+            }
+            else if (coor[0] == 3 && coor[1] == 6)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄙ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄙ";
+            }
+            else if (coor[0] == 1 && coor[1] == 5)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄧ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄧ";
+            }
+            else if (coor[0] == 2 && coor[1] == 5)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄨ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄨ";
+            }
+            else if (coor[0] == 3 && coor[1] == 5)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄩ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄩ";
+            }
+            else if (coor[0] == 1 && coor[1] == 4)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄚ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄚ";
+            }
+            else if (coor[0] == 2 && coor[1] == 4)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄛ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄛ";
+            }
+            else if (coor[0] == 3 && coor[1] == 4)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄜ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄜ";
+            }
+            else if (coor[0] == 4 && coor[1] == 4)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄝ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄝ";
+            }
+            else if (coor[0] == 1 && coor[1] == 3)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄞ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄞ";
+            }
+            else if (coor[0] == 2 && coor[1] == 3)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄟ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄟ";
+            }
+            else if (coor[0] == 3 && coor[1] == 3)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄠ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄠ";
+            }
+            else if (coor[0] == 4 && coor[1] == 3)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄡ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄡ";
+            }
+            else if (coor[0] == 1 && coor[1] == 2)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄢ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄢ";
+            }
+            else if (coor[0] == 2 && coor[1] == 2)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄣ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄣ";
+            }
+            else if (coor[0] == 3 && coor[1] == 2)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄤ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄤ";
+            }
+            else if (coor[0] == 4 && coor[1] == 2)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄥ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄥ";
+            }
+            else if (coor[0] == 1 && coor[1] == 1)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ㄦ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ㄦ";
+            }
+            else if (coor[0] == 1 && coor[1] == 0)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ˊ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ˊ";
+            }
+            else if (coor[0] == 2 && coor[1] == 0)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ˇ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ˇ";
+            }
+            else if (coor[0] == 3 && coor[1] == 0)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "ˋ")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "ˋ";
+            }
+            else if (coor[0] == 4 && coor[1] == 0)
+            {
+                foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+                {
+                    TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                    if (tmp.text == "˙")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
+                }
+                input.text += "˙";
+            }
+        }
+        else if (Input.GetKeyUp(KeyCode.Return))
+        {
+            isSomeKeyPressed = false;
+            foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+            {
+                TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                tmp.fontSize = fontSizeDefault;
+            }
+        }
+    }
+
+    void ChangeSelectedChar()
+    {
         if (coor[0] == 0 && coor[1] == 11)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄅ")
+                if (tmp.text == "決定")
+                {
+                    tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
+                }
+                else
+                {
+                    tmp.fontStyle = FontStyles.Normal;
+                }
+            }
+        }
+        else if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
+        {
+            foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+            {
+                TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                if (tmp.text == "一声")
+                {
+                    tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
+                }
+                else
+                {
+                    tmp.fontStyle = FontStyles.Normal;
+                }
+            }
+        }
+        else if (coor[0] == 0 && (coor[1] == 5 || coor[1] == 4 || coor[1] == 3 || coor[1] == 2 || coor[1] == 1 || coor[1] == 0))
+        {
+            foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+            {
+                TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                if (tmp.text == "削除")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -77,7 +692,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄆ")
+                if (tmp.text == "ㄅ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -92,7 +707,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄇ")
+                if (tmp.text == "ㄆ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -107,7 +722,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄈ")
+                if (tmp.text == "ㄇ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -117,12 +732,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 10)
+        else if (coor[0] == 4 && coor[1] == 11)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄉ")
+                if (tmp.text == "ㄈ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -137,7 +752,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄊ")
+                if (tmp.text == "ㄉ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -152,7 +767,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄋ")
+                if (tmp.text == "ㄊ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -167,7 +782,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄌ")
+                if (tmp.text == "ㄋ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -177,12 +792,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 9)
+        else if (coor[0] == 4 && coor[1] == 10)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄍ")
+                if (tmp.text == "ㄌ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -197,7 +812,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄎ")
+                if (tmp.text == "ㄍ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -212,7 +827,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄏ")
+                if (tmp.text == "ㄎ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -222,12 +837,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 8)
+        else if (coor[0] == 3 && coor[1] == 9)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄐ")
+                if (tmp.text == "ㄏ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -242,7 +857,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄑ")
+                if (tmp.text == "ㄐ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -257,7 +872,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄒ")
+                if (tmp.text == "ㄑ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -267,12 +882,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 7)
+        else if (coor[0] == 3 && coor[1] == 8)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄓ")
+                if (tmp.text == "ㄒ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -287,7 +902,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄔ")
+                if (tmp.text == "ㄓ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -302,7 +917,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄕ")
+                if (tmp.text == "ㄔ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -317,7 +932,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄖ")
+                if (tmp.text == "ㄕ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -327,12 +942,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 6)
+        else if (coor[0] == 4 && coor[1] == 7)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄗ")
+                if (tmp.text == "ㄖ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -347,7 +962,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄘ")
+                if (tmp.text == "ㄗ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -362,7 +977,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄙ")
+                if (tmp.text == "ㄘ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -372,12 +987,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 5)
+        else if (coor[0] == 3 && coor[1] == 6)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄧ")
+                if (tmp.text == "ㄙ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -392,7 +1007,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄨ")
+                if (tmp.text == "ㄧ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -407,7 +1022,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄩ")
+                if (tmp.text == "ㄨ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -417,12 +1032,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 4)
+        else if (coor[0] == 3 && coor[1] == 5)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄚ")
+                if (tmp.text == "ㄩ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -437,7 +1052,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄛ")
+                if (tmp.text == "ㄚ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -452,7 +1067,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄜ")
+                if (tmp.text == "ㄛ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -467,7 +1082,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄝ")
+                if (tmp.text == "ㄜ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -477,12 +1092,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 3)
+        else if (coor[0] == 4 && coor[1] == 4)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄞ")
+                if (tmp.text == "ㄝ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -497,7 +1112,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄟ")
+                if (tmp.text == "ㄞ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -512,7 +1127,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄠ")
+                if (tmp.text == "ㄟ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -527,7 +1142,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄡ")
+                if (tmp.text == "ㄠ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -537,12 +1152,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 2)
+        else if (coor[0] == 4 && coor[1] == 3)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄢ")
+                if (tmp.text == "ㄡ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -557,7 +1172,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄣ")
+                if (tmp.text == "ㄢ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -572,7 +1187,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "ㄤ")
+                if (tmp.text == "ㄣ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
@@ -587,6 +1202,21 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                if (tmp.text == "ㄤ")
+                {
+                    tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
+                }
+                else
+                {
+                    tmp.fontStyle = FontStyles.Normal;
+                }
+            }
+        }
+        else if (coor[0] == 4 && coor[1] == 2)
+        {
+            foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+            {
+                TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
                 if (tmp.text == "ㄥ")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
@@ -597,7 +1227,7 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 1)
+        else if (coor[0] == 1 && coor[1] == 1)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
@@ -612,7 +1242,7 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 0 && coor[1] == 0)
+        else if (coor[0] == 1 && coor[1] == 0)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
@@ -627,7 +1257,7 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 1 && coor[1] == 0)
+        else if (coor[0] == 2 && coor[1] == 0)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
@@ -642,7 +1272,7 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 2 && coor[1] == 0)
+        else if (coor[0] == 3 && coor[1] == 0)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
@@ -657,7 +1287,7 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
-        else if (coor[0] == 3 && coor[1] == 0)
+        else if (coor[0] == 4 && coor[1] == 0)
         {
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
