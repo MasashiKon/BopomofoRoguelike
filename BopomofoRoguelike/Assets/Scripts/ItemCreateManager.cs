@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using static Unity.Burst.Intrinsics.X86.Avx;
 
 public class ItemCreateManager : MonoBehaviour
 {
@@ -18,12 +19,15 @@ public class ItemCreateManager : MonoBehaviour
     private int fontSizePressed = 25;
     private bool isSomeKeyPressed = false;
     private string memo = "選定 一聲 刪除";
+    private bool isConverting = false;
+    private TextMeshProUGUI input;
 
     // Start is called before the first frame update
     void Start()
     {
         prefabManager = GameObject.Find("Prefab Manager").GetComponent<PrefabManager>();
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        input = GameObject.Find("Zhuyin Input").GetComponent<TextMeshProUGUI>();
     }
 
     // Update is called once per frame
@@ -96,7 +100,6 @@ public class ItemCreateManager : MonoBehaviour
         else if (Input.GetKeyDown(KeyCode.Return))
         {
             isSomeKeyPressed = true;
-            TextMeshProUGUI input = GameObject.Find("Kanji Input").GetComponent<TextMeshProUGUI>();
             if (coor[0] == 0 && coor[1] == 11)
             {
                 foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
@@ -105,8 +108,12 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "決定")
                     {
                         tmp.fontSize = fontSizePressed;
+                        if (input.text == "刀")
+                        {
+                            uiManager.items.Add(Instantiate(prefabManager.items[2]));
+                            input.text = "";
+                        }
                     }
-
                 }
             }
             else if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
@@ -117,8 +124,15 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "一声")
                     {
                         tmp.fontSize = fontSizePressed;
+                        if (input.text == "ㄉㄠ")
+                        {
+                            input.text = "刀";
+                        }
                     }
-
+                    else if (tmp.text == "変換")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                    }
                 }
             }
             else if (coor[0] == 0 && (coor[1] == 5 || coor[1] == 4 || coor[1] == 3 || coor[1] == 2 || coor[1] == 1 || coor[1] == 0))
@@ -635,6 +649,17 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
+                {
+                    if (tmp.text == "一声" && input.text.Length > 0)
+                    {
+                        tmp.text = "変換";
+                    }
+                }
+                if (tmp.text == "変換" && input.text.Length == 0)
+                {
+                    tmp.text = "一声";
+                }
                 tmp.fontSize = fontSizeDefault;
             }
         }
@@ -662,7 +687,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "一声")
+                if (tmp.text == "一声" || tmp.text == "変換")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
