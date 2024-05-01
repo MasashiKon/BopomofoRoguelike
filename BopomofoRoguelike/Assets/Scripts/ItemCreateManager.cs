@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using static Unity.Burst.Intrinsics.X86.Avx;
+using System;
 
 public class ItemCreateManager : MonoBehaviour
 {
@@ -110,7 +111,12 @@ public class ItemCreateManager : MonoBehaviour
                         tmp.fontSize = fontSizePressed;
                         if (input.text == "刀")
                         {
-                            uiManager.items.Add(Instantiate(prefabManager.items[2]));
+                            uiManager.items.Add(Instantiate(prefabManager.items[2], new Vector3(26, 26, 0), Quaternion.identity));
+                            input.text = "";
+                        }
+                        else if (input.text == "盾")
+                        {
+                            uiManager.items.Add(Instantiate(prefabManager.items[3], new Vector3(26, 26, 0), Quaternion.identity));
                             input.text = "";
                         }
                     }
@@ -132,6 +138,10 @@ public class ItemCreateManager : MonoBehaviour
                     else if (tmp.text == "変換")
                     {
                         tmp.fontSize = fontSizePressed;
+                        if (input.text == "ㄉㄨㄣˋ")
+                        {
+                            input.text = "盾";
+                        }
                     }
                 }
             }
@@ -650,6 +660,13 @@ public class ItemCreateManager : MonoBehaviour
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
                 if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
+                {
+                    if (tmp.text == "一声" && input.text.Length > 0)
+                    {
+                        tmp.text = "変換";
+                    }
+                }
+                else if (coor[0] == 1 && coor[1] == 0 || coor[0] == 2 && coor[1] == 0 || coor[0] == 3 && coor[1] == 0 || coor[0] == 4 && coor[1] == 0)
                 {
                     if (tmp.text == "一声" && input.text.Length > 0)
                     {
