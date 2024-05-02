@@ -119,6 +119,11 @@ public class ItemCreateManager : MonoBehaviour
                             uiManager.items.Add(Instantiate(prefabManager.items[3], new Vector3(26, 26, 0), Quaternion.identity));
                             input.text = "";
                         }
+                        else if (input.text == "草")
+                        {
+                            uiManager.items.Add(Instantiate(prefabManager.items[1], new Vector3(26, 26, 0), Quaternion.identity));
+                            input.text = "";
+                        }
                     }
                 }
             }
@@ -142,6 +147,12 @@ public class ItemCreateManager : MonoBehaviour
                         {
                             input.text = "盾";
                         }
+                        else if (input.text == "ㄘㄠˇ")
+                        {
+                            input.text = "草";
+
+                        }
+
                     }
                 }
             }
