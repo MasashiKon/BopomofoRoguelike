@@ -9,6 +9,7 @@ public class ItemCreateManager : MonoBehaviour
 {
     public PrefabManager prefabManager;
     public UIManager uiManager;
+    public TurnManager turnManager;
     private bool[,] charTable = { { true, true, true, true, true, true, true, true, true, true, true, true },
         { true, true, true, true, true, true, true, true, true, true, true, true },
     { true, false, true, true, true, true, true, true, true, true, true, true },
@@ -28,6 +29,7 @@ public class ItemCreateManager : MonoBehaviour
     {
         prefabManager = GameObject.Find("Prefab Manager").GetComponent<PrefabManager>();
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
+        turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
         input = GameObject.Find("Zhuyin Input").GetComponent<TextMeshProUGUI>();
     }
 
@@ -112,17 +114,17 @@ public class ItemCreateManager : MonoBehaviour
                         if (input.text == "刀")
                         {
                             uiManager.items.Add(Instantiate(prefabManager.items[2], new Vector3(26, 26, 0), Quaternion.identity));
-                            input.text = "";
+                            CloseManager();
                         }
                         else if (input.text == "盾")
                         {
                             uiManager.items.Add(Instantiate(prefabManager.items[3], new Vector3(26, 26, 0), Quaternion.identity));
-                            input.text = "";
+                            CloseManager();
                         }
                         else if (input.text == "草")
                         {
                             uiManager.items.Add(Instantiate(prefabManager.items[1], new Vector3(26, 26, 0), Quaternion.identity));
-                            input.text = "";
+                            CloseManager();
                         }
                     }
                 }
@@ -1355,5 +1357,12 @@ public class ItemCreateManager : MonoBehaviour
                 }
             }
         }
+    }
+    void CloseManager()
+    {
+        input.text = "";
+        gameObject.SetActive(false);
+        uiManager.isPaused = false;
+        turnManager.ProcessTurn();
     }
 }
