@@ -3,10 +3,8 @@ using System.Collections;
 using TMPro;
 using UnityEngine;
 
-public class Sword : Item
+public class Sword2 : Sword
 {
-    public int attack = 5;
-
     public override Commands[] GetCommands()
     {
         return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw, Commands.Equip, Commands.Off };
@@ -32,7 +30,7 @@ public class Sword : Item
         {
             playerController.sword.isEquiped = false;
         }
-        playerController.sword = gameObject.GetComponent<Sword>();
+        playerController.sword = gameObject.GetComponent<Sword2>();
         playerController.isPlayerUseItem = true;
         menu.SetActive(false);
         StartCoroutine(RenderTextAndProcessTurn(GetNameTranslation(Language.Ja) + "を装備した"));
@@ -49,7 +47,7 @@ public class Sword : Item
         copiedItem.transform.localPosition = new Vector3(copiedItem.transform.localPosition.x + 0.4f, copiedItem.transform.localPosition.y, copiedItem.transform.localPosition.z);
         uiManager.isPaused = false;
         PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        playerController.sword = gameObject.GetComponent<Sword>();
+        playerController.sword = gameObject.GetComponent<Sword2>();
     }
 
     public override void Off(GameObject menu, int index)
@@ -59,7 +57,7 @@ public class Sword : Item
         GameObject player = GameObject.Find("Player");
         for (int i = 0; i < player.transform.childCount; i++)
         {
-            if (player.transform.GetChild(i).GetComponent<Sword>())
+            if (player.transform.GetChild(i).GetComponent<Sword2>())
             {
                 Destroy(player.transform.GetChild(i).gameObject);
             }
@@ -86,13 +84,13 @@ public class Sword : Item
         switch (lang)
         {
             case Language.Ja:
-                return "剣";
+                return "強い剣";
             default:
                 return "";
         }
     }
 
-    public virtual int GetSwordAttack()
+    public override int GetSwordAttack()
     {
         return attack;
     }

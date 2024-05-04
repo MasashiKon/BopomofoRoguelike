@@ -31,6 +31,16 @@ public class ItemCreateManager : MonoBehaviour
         uiManager = GameObject.Find("UI Manager").GetComponent<UIManager>();
         turnManager = GameObject.Find("Turn Manager").GetComponent<TurnManager>();
         input = GameObject.Find("Zhuyin Input").GetComponent<TextMeshProUGUI>();
+        coor[0] = 1;
+        coor[1] = 11;
+        foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+        {
+            TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+            if (tmp.text == "ㄅ")
+            {
+                tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -1361,6 +1371,17 @@ public class ItemCreateManager : MonoBehaviour
     void CloseManager()
     {
         input.text = "";
+        isSomeKeyPressed = false;
+        foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
+        {
+            TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+            tmp.fontStyle = FontStyles.Normal;
+            tmp.fontSize = fontSizeDefault;
+            if (tmp.text == "変換")
+            {
+                tmp.text = "一声";
+            }
+        }
         gameObject.SetActive(false);
         uiManager.isPaused = false;
         turnManager.ProcessTurn();
