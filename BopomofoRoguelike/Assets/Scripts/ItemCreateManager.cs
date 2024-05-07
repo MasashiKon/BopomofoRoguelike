@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using TMPro;
 using static Unity.Burst.Intrinsics.X86.Avx;
@@ -23,6 +24,7 @@ public class ItemCreateManager : MonoBehaviour
     private string memo = "選定 一聲 刪除";
     private bool isConverting = false;
     private TextMeshProUGUI input;
+    private string bopomofoList = "ㄅㄆㄇㄈㄉㄊㄋㄌㄍㄎㄏㄐㄑㄒㄓㄔㄕㄖㄗㄘㄙㄧㄨㄩㄚㄛㄜㄝㄞㄟㄠㄡㄢㄣㄤㄥㄦ";
 
     // Start is called before the first frame update
     void Start()
@@ -118,10 +120,15 @@ public class ItemCreateManager : MonoBehaviour
                 foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
                 {
                     TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                    if (tmp.text == "決定")
+                    if (tmp.text == "錬成")
                     {
                         tmp.fontSize = fontSizePressed;
-                        if (input.text == "刀")
+                        if (input.text == "強刀")
+                        {
+                            uiManager.items.Add(Instantiate(prefabManager.items[4], new Vector3(26, 26, 0), Quaternion.identity));
+                            CloseManager();
+                        }
+                        else if (input.text == "刀")
                         {
                             uiManager.items.Add(Instantiate(prefabManager.items[2], new Vector3(26, 26, 0), Quaternion.identity));
                             CloseManager();
@@ -137,6 +144,15 @@ public class ItemCreateManager : MonoBehaviour
                             CloseManager();
                         }
                     }
+                    else if (tmp.text == "決定")
+                    {
+                        tmp.fontSize = fontSizePressed;
+                        if (!input.text.Any(bo => bopomofoList.Contains(bo)))
+                        {
+                            isConverting = false;
+                            tmp.text = "錬成";
+                        }
+                    }
                 }
             }
             else if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
@@ -147,24 +163,30 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "一声")
                     {
                         tmp.fontSize = fontSizePressed;
-                        if (input.text == "ㄉㄠ")
+                        if (input.text.Contains("ㄉㄠ"))
                         {
-                            input.text = "刀";
+                            input.text = input.text.Replace("ㄉㄠ", "刀");
+                            isConverting = true;
                         }
                     }
                     else if (tmp.text == "変換")
                     {
                         tmp.fontSize = fontSizePressed;
-                        if (input.text == "ㄉㄨㄣˋ")
+                        if (input.text.Contains("ㄉㄨㄣˋ"))
                         {
-                            input.text = "盾";
+                            input.text = input.text.Replace("ㄉㄨㄣˋ", "盾");
+                            isConverting = true;
                         }
-                        else if (input.text == "ㄘㄠˇ")
+                        else if (input.text.Contains("ㄘㄠˇ"))
                         {
-                            input.text = "草";
-
+                            input.text = input.text.Replace("ㄘㄠˇ", "草");
+                            isConverting = true;
                         }
-
+                        else if (input.text.Contains("ㄑㄧㄤˇ"))
+                        {
+                            input.text = input.text.Replace("ㄑㄧㄤˇ", "強");
+                            isConverting = true;
+                        }
                     }
                 }
             }
@@ -192,6 +214,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄅ";
             }
@@ -203,6 +229,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄆ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄆ";
@@ -216,6 +246,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄇ";
             }
@@ -227,6 +261,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄈ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄈ";
@@ -240,6 +278,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄉ";
             }
@@ -251,6 +293,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄊ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄊ";
@@ -264,6 +310,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄋ";
             }
@@ -275,6 +325,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄌ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄌ";
@@ -288,6 +342,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄍ";
             }
@@ -299,6 +357,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄎ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄎ";
@@ -312,6 +374,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄏ";
             }
@@ -323,6 +389,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄐ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄐ";
@@ -336,6 +406,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄑ";
             }
@@ -347,6 +421,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄒ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄒ";
@@ -360,6 +438,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄓ";
             }
@@ -371,6 +453,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄔ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄔ";
@@ -384,6 +470,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄕ";
             }
@@ -395,6 +485,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄖ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄖ";
@@ -408,6 +502,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄗ";
             }
@@ -419,6 +517,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄘ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄘ";
@@ -432,6 +534,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄙ";
             }
@@ -443,6 +549,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄧ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄧ";
@@ -456,6 +566,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄨ";
             }
@@ -467,6 +581,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄩ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄩ";
@@ -480,6 +598,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄚ";
             }
@@ -491,6 +613,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄛ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄛ";
@@ -504,6 +630,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄜ";
             }
@@ -515,6 +645,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄝ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄝ";
@@ -528,6 +662,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄞ";
             }
@@ -539,6 +677,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄟ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄟ";
@@ -552,6 +694,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄠ";
             }
@@ -563,6 +709,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄡ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄡ";
@@ -576,6 +726,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄢ";
             }
@@ -587,6 +741,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄣ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄣ";
@@ -600,6 +758,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄤ";
             }
@@ -611,6 +773,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ㄥ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ㄥ";
@@ -624,6 +790,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ㄦ";
             }
@@ -635,6 +805,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ˊ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ˊ";
@@ -648,6 +822,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "ˇ";
             }
@@ -659,6 +837,10 @@ public class ItemCreateManager : MonoBehaviour
                     if (tmp.text == "ˋ")
                     {
                         tmp.fontSize = fontSizePressed;
+                    }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
                     }
                 }
                 input.text += "ˋ";
@@ -672,6 +854,10 @@ public class ItemCreateManager : MonoBehaviour
                     {
                         tmp.fontSize = fontSizePressed;
                     }
+                    else if (tmp.text == "錬成")
+                    {
+                        tmp.text = "決定";
+                    }
                 }
                 input.text += "˙";
             }
@@ -682,21 +868,22 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
+                Debug.Log(tmp.text == "一声" && input.text.Length > 0 && input.text.Any(bo => "ˇˋˊ˙".Contains(bo)));
                 if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
                 {
-                    if (tmp.text == "一声" && input.text.Length > 0)
+                    if (tmp.text == "一声" && input.text.Length > 0 && input.text.Any(bo => "ˇˋˊ˙".Contains(bo)))
                     {
                         tmp.text = "変換";
                     }
                 }
                 else if (coor[0] == 1 && coor[1] == 0 || coor[0] == 2 && coor[1] == 0 || coor[0] == 3 && coor[1] == 0 || coor[0] == 4 && coor[1] == 0)
                 {
-                    if (tmp.text == "一声" && input.text.Length > 0)
+                    if (tmp.text == "一声" && input.text.Length > 0 && input.text.Any(bo => "ˇˋˊ˙".Contains(bo)))
                     {
                         tmp.text = "変換";
                     }
                 }
-                if (tmp.text == "変換" && input.text.Length == 0)
+                if (tmp.text == "変換" && (input.text.Length == 0 || (input.text.Any(bo => bopomofoList.Contains(bo) && !input.text.Any(bo => "ˇˋˊ˙".Contains(bo))))))
                 {
                     tmp.text = "一声";
                 }
@@ -712,7 +899,7 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                if (tmp.text == "決定")
+                if (tmp.text == "決定" || tmp.text == "錬成")
                 {
                     tmp.fontStyle = FontStyles.Bold | FontStyles.Italic;
                 }
