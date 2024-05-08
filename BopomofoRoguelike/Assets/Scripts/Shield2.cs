@@ -4,10 +4,8 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class Shield : Item
+public class Shield2 : Shield
 {
-    public int defence = 5;
-
     public override Commands[] GetCommands()
     {
         return new Commands[] { Commands.Use, Commands.Dispose, Commands.Put, Commands.Throw, Commands.Equip, Commands.Off };
@@ -28,9 +26,9 @@ public class Shield : Item
         copiedItem.GetComponent<SpriteRenderer>().sortingOrder = 4;
         copiedItem.transform.localPosition = new Vector3(copiedItem.transform.localPosition.x - 0.2f, copiedItem.transform.localPosition.y + 0.4f, copiedItem.transform.localPosition.z);
         uiManager.isPaused = false;
-        GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = gameObject.GetComponent<Shield>();
+        GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = gameObject.GetComponent<Shield2>();
         PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        playerController.shield = gameObject.GetComponent<Shield>();
+        playerController.shield = gameObject.GetComponent<Shield2>();
         playerController.isPlayerUseItem = true;
         menu.SetActive(false);
         StartCoroutine(RenderTextAndProcessTurn(GetNameTranslation(Language.Ja) + "を装備した"));
@@ -46,9 +44,9 @@ public class Shield : Item
         copiedItem.GetComponent<SpriteRenderer>().sortingOrder = 4;
         copiedItem.transform.localPosition = new Vector3(copiedItem.transform.localPosition.x - 0.2f, copiedItem.transform.localPosition.y + 0.4f, copiedItem.transform.localPosition.z);
         uiManager.isPaused = false;
-        GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = gameObject.GetComponent<Shield>();
+        GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = gameObject.GetComponent<Shield2>();
         PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
-        playerController.shield = gameObject.GetComponent<Shield>();
+        playerController.shield = gameObject.GetComponent<Shield2>();
     }
 
     public override void Off(GameObject menu, int index)
@@ -58,7 +56,7 @@ public class Shield : Item
         GameObject player = GameObject.Find("Player");
         for (int i = 0; i < player.transform.childCount; i++)
         {
-            if (player.transform.GetChild(i).GetComponent<Shield>())
+            if (player.transform.GetChild(i).GetComponent<Shield2>())
             {
                 Destroy(player.transform.GetChild(i).gameObject);
             }
@@ -85,13 +83,13 @@ public class Shield : Item
         switch (lang)
         {
             case Language.Ja:
-                return "盾";
+                return "硬い盾";
             default:
                 return "";
         }
     }
 
-    public virtual int GetSwordDefence()
+    public override int GetSwordDefence()
     {
         return defence;
     }
