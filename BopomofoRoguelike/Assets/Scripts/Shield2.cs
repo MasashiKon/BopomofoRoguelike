@@ -26,8 +26,11 @@ public class Shield2 : Shield
         copiedItem.GetComponent<SpriteRenderer>().sortingOrder = 4;
         copiedItem.transform.localPosition = new Vector3(copiedItem.transform.localPosition.x - 0.2f, copiedItem.transform.localPosition.y + 0.4f, copiedItem.transform.localPosition.z);
         uiManager.isPaused = false;
-        GameObject.FindWithTag("Player").GetComponent<PlayerController>().shield = gameObject.GetComponent<Shield2>();
         PlayerController playerController = GameObject.FindWithTag("Player").GetComponent<PlayerController>();
+        if (playerController.shield)
+        {
+            playerController.shield.isEquiped = false;
+        }
         playerController.shield = gameObject.GetComponent<Shield2>();
         playerController.isPlayerUseItem = true;
         menu.SetActive(false);

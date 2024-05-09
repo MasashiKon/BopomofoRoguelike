@@ -143,6 +143,11 @@ public class ItemCreateManager : MonoBehaviour
                             uiManager.items.Add(Instantiate(prefabManager.items[1], new Vector3(26, 26, 0), Quaternion.identity));
                             CloseManager();
                         }
+                        else if (input.text == "硬盾")
+                        {
+                            uiManager.items.Add(Instantiate(prefabManager.items[5], new Vector3(26, 26, 0), Quaternion.identity));
+                            CloseManager();
+                        }
                     }
                     else if (tmp.text == "決定")
                     {
@@ -185,6 +190,11 @@ public class ItemCreateManager : MonoBehaviour
                         else if (input.text.Contains("ㄑㄧㄤˇ"))
                         {
                             input.text = input.text.Replace("ㄑㄧㄤˇ", "強");
+                            isConverting = true;
+                        }
+                        else if (input.text.Contains("ㄧㄥˋ"))
+                        {
+                            input.text = input.text.Replace("ㄧㄥˋ", "硬");
                             isConverting = true;
                         }
                     }
@@ -868,7 +878,6 @@ public class ItemCreateManager : MonoBehaviour
             foreach (GameObject bopomofo in GameObject.FindGameObjectsWithTag("Bopomofo"))
             {
                 TextMeshProUGUI tmp = bopomofo.GetComponent<TextMeshProUGUI>();
-                Debug.Log(tmp.text == "一声" && input.text.Length > 0 && input.text.Any(bo => "ˇˋˊ˙".Contains(bo)));
                 if (coor[0] == 0 && (coor[1] == 10 || coor[1] == 9 || coor[1] == 8 || coor[1] == 7 || coor[1] == 6))
                 {
                     if (tmp.text == "一声" && input.text.Length > 0 && input.text.Any(bo => "ˇˋˊ˙".Contains(bo)))
