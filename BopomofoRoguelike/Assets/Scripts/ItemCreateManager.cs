@@ -148,6 +148,11 @@ public class ItemCreateManager : MonoBehaviour
                             uiManager.items.Add(Instantiate(prefabManager.items[5], new Vector3(26, 26, 0), Quaternion.identity));
                             CloseManager();
                         }
+                        else if (input.text == "利刀" || input.text == "利劍" || input.text == "鋒利的刀" || input.text == "鋒利的劍")
+                        {
+                            uiManager.items.Add(Instantiate(prefabManager.items[6], new Vector3(26, 26, 0), Quaternion.identity));
+                            CloseManager();
+                        }
                     }
                     else if (tmp.text == "決定")
                     {
@@ -173,6 +178,11 @@ public class ItemCreateManager : MonoBehaviour
                             input.text = input.text.Replace("ㄉㄠ", "刀");
                             isConverting = true;
                         }
+                        else if (input.text.Contains("ㄈㄥ"))
+                        {
+                            input.text = input.text.Replace("ㄈㄥ", "鋒");
+                            isConverting = true;
+                        }
                     }
                     else if (tmp.text == "変換")
                     {
@@ -195,6 +205,21 @@ public class ItemCreateManager : MonoBehaviour
                         else if (input.text.Contains("ㄧㄥˋ"))
                         {
                             input.text = input.text.Replace("ㄧㄥˋ", "硬");
+                            isConverting = true;
+                        }
+                        else if (input.text.Contains("ㄌㄧˋ"))
+                        {
+                            input.text = input.text.Replace("ㄌㄧˋ", "利");
+                            isConverting = true;
+                        }
+                        else if (input.text.Contains("ㄐㄧㄢˋ"))
+                        {
+                            input.text = input.text.Replace("ㄐㄧㄢˋ", "劍");
+                            isConverting = true;
+                        }
+                        else if (input.text.Contains("ㄉㄜ˙"))
+                        {
+                            input.text = input.text.Replace("ㄉㄜ˙", "的");
                             isConverting = true;
                         }
                     }
